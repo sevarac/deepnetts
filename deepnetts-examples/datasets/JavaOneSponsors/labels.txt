@@ -1,0 +1,7 @@
+atlassian
+couchbase
+ibm
+intel
+lightbend
+microsoft
+redhat
