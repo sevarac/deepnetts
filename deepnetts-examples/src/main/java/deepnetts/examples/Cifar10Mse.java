@@ -25,6 +25,7 @@ import deepnetts.data.ImageSet;
 import deepnetts.net.ConvolutionalNetwork;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.layers.OutputLayer;
+import deepnetts.net.loss.LossType;
 import deepnetts.net.loss.MeanSquaredErrorLoss;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.OptimizerType;
@@ -60,12 +61,12 @@ public class Cifar10Mse {
         LOG.info("Creating neural network...");
 
         ConvolutionalNetwork cifar10Net = new ConvolutionalNetwork.Builder()
-                                        .inputLayer(imageWidth, imageHeight, 3) 
-                                        .convolutionalLayer(5, 5, 1, ActivationType.TANH)
-                                        .maxPoolingLayer(2, 2, 2)  
+                                        .inputLayer(imageWidth, imageHeight) 
+                                        .convolutionalLayer(5, 1, ActivationType.TANH)
+                                        .maxPoolingLayer(2, 2)  
                                         .fullyConnectedLayer(20, ActivationType.TANH)          
-                                        .outputLayer(labelsCount, OutputLayer.class) // also choose output activation function
-                                        .lossFunction(MeanSquaredErrorLoss.class)
+                                        .outputLayer(labelsCount, ActivationType.TANH)
+                                        .lossFunction(LossType.MEAN_SQUARED_ERROR)
                                         .randomSeed(123)
                                         .build();
         

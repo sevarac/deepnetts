@@ -30,6 +30,7 @@ import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.OptimizerType;
 import deepnetts.util.DeepNettsException;
 import deepnetts.eval.ClassifierEvaluator;
+import deepnetts.net.loss.LossType;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -65,8 +66,8 @@ public class Cifar10Ce {
                                         .convolutionalLayer(5, 5, 3, ActivationType.TANH)
                                         .maxPoolingLayer(2, 2, 2)                                 
                                         .fullyConnectedLayer(20, ActivationType.TANH)     
-                                        .outputLayer(labelsCount, SoftmaxOutputLayer.class)
-                                        .lossFunction(CrossEntropyLoss.class)                
+                                        .outputLayer(labelsCount, ActivationType.SOFTMAX)
+                                        .lossFunction(LossType.CROSS_ENTROPY)                
                                         .build();
         
         LOGGER.info("Done!");       

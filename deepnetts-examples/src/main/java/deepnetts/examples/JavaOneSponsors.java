@@ -30,6 +30,7 @@ import deepnetts.net.loss.CrossEntropyLoss;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.OptimizerType;
 import deepnetts.eval.ClassifierEvaluator;
+import deepnetts.net.loss.LossType;
 import deepnetts.util.FileIO;
 import java.io.File;
 import java.io.IOException;
@@ -68,12 +69,12 @@ public class JavaOneSponsors {
 
         // dodaj i bele slike kao negative u data set
         ConvolutionalNetwork javaOneNet = ConvolutionalNetwork.builder()
-                                        .inputLayer(imageWidth, imageHeight, 1) 
+                                        .inputLayer(imageWidth, imageHeight) 
                                         .convolutionalLayer(5, 5, 3, ActivationType.TANH)
                                         .maxPoolingLayer(2, 2, 2)                 
                                         .fullyConnectedLayer(30, ActivationType.TANH)
                                         .outputLayer(labelsCount, ActivationType.SOFTMAX)
-                                        .lossFunction(CrossEntropyLoss.class)
+                                        .lossFunction(LossType.CROSS_ENTROPY)
                                         .randomSeed(123)
                                         .build();
                      
@@ -86,8 +87,8 @@ public class JavaOneSponsors {
         BackpropagationTrainer trainer = new BackpropagationTrainer(javaOneNet);
         trainer.setLearningRate(0.01f)
                .setMomentum(0.7f)
-               .setMaxError(0.6f)
-               .setMaxIterations(100)
+               .setMaxError(0.03f)
+               .setMaxIterations(500)
                .setOptimizer(OptimizerType.MOMENTUM);
         trainer.train(imageSet);   
           
