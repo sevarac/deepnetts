@@ -25,6 +25,7 @@ import deepnetts.core.DeepNetts;
 import deepnetts.net.train.Optimizers;
 import deepnetts.util.WeightsInit;
 import deepnetts.util.Tensor;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -185,27 +186,27 @@ public class ConvolutionalLayer extends AbstractLayer {
                 outC = 0; // every time when input goes in next row, output does too, so reset column idx
 
                 for (int inC = 0; inC < inputs.getCols(); inC += stride) { // iterate all input cols
-                   outputs.set(outR, outC, outZ, biases[outZ]); // sum will be added to bias - I can set entire matrix to bias initial values  above - I have System.arraycopy
+                   outputs.set(outR, outC, outZ, biases[outZ]); // sum will be added to bias - I can set entire matrix to bias initial values  above
 
                     // apply filter to all channnels in previous layer                     
                     for (int fz = 0; fz < filterDepth; fz++) { // iterate filter by depth - all input channels (in previous layer) 
                         for (int fr = 0; fr < filterHeight; fr++) { // iterate filter by height/rows
                             for (int fc = 0; fc < filterWidth; fc++) { // iterate filter by width / columns                        
                                 // padding
-                                int cr = inR + (fr - fCenterY); // convolved row idx 
-                                int cc = inC + (fc - fCenterX); // convolved col idx
+                                final int cr = inR + (fr - fCenterY); // convolved row idx 
+                                final int cc = inC + (fc - fCenterX); // convolved col idx
 
                                 // ignore input samples which are out of bounds
                                 if (cr < 0 || cr >= inputs.getRows() || cc < 0 || cc >= inputs.getCols()) continue;
                                
-                                final float cout = inputs.get(cr, cc, fz) * filters[outZ].get(fr, fc, fz); // output of a single conv filter cell
-                                outputs.add(outR, outC, outZ, cout); // accumulate filters from all channels
+                                final float out = inputs.get(cr, cc, fz) * filters[outZ].get(fr, fc, fz); // output of a single conv filter cell
+                                outputs.add(outR, outC, outZ, out); // accumulate filters from all channels
                             }
                         }
                     }
-
+                    
                     // apply activation function
-                    float out = ActivationFunctions.calc(activationType, outputs.get(outR, outC, outZ));
+                    final float out = ActivationFunctions.calc(activationType, outputs.get(outR, outC, outZ));
                     outputs.set(outR, outC, outZ, out);
                     outC++; // move to next col in out layer after each filter position
                 }
@@ -275,10 +276,10 @@ public class ConvolutionalLayer extends AbstractLayer {
     }
 
     private void backwardFromMaxPooling() {
-        MaxPoolingLayer nextPoolLayer = (MaxPoolingLayer) nextLayer;
+        final MaxPoolingLayer nextPoolLayer = (MaxPoolingLayer) nextLayer;
         deltas.fill(0); // reset all deltas
 
-        for (int ch = 0; ch < this.depth; ch++) {  // iteriraj sve kanale u ovom lejeru (to su automatski i kanali u sledem lejeru)
+        for (int ch = 0; ch < this.depth; ch++) {  // iteriraj sve kanale u ovom lejeru (to su automatski i kanali u sledem max pooling lejeru)
             // 1. Propagate deltas from next layer for max outputs from this layer
             for (int dr = 0; dr < nextLayer.deltas.getRows(); dr++) { // sledeci lejer delte po visini
                 for (int dc = 0; dc < nextLayer.deltas.getCols(); dc++) { // sledeci lejer delte po sirini
@@ -292,6 +293,7 @@ public class ConvolutionalLayer extends AbstractLayer {
                     deltas.set(maxR, maxC, ch, nextLayerDelta * derivative);
                 }
             } // end propagate deltas
+            
             calculateDeltaWeights(ch);            
         } // end channel iterator    
     }
@@ -307,18 +309,17 @@ public class ConvolutionalLayer extends AbstractLayer {
             for (int ndZ = 0; ndZ < nextLayer.deltas.getDepth(); ndZ++) { // iteriraj sve kanale sledeceg sloja
                 for (int ndRow = 0; ndRow < nextLayer.deltas.getRows(); ndRow++) { // sledeci lejer delte po visini
                     for (int ndCol = 0; ndCol < nextLayer.deltas.getCols(); ndCol++) { // sledeci lejer delte po sirini
-                        float nextLayerDelta = nextLayer.deltas.get(ndRow, ndCol, ndZ); // uzmi deltu iz sledeceg sloja za tekuci neuron (dx, dy, dz) sledeceg sloja, da li treba d ase sabiraju?
-
-                        int row, col; // koordinate inputa, outputa iz ovog sloja
+                        final float nextLayerDelta = nextLayer.deltas.get(ndRow, ndCol, ndZ); // uzmi deltu iz sledeceg sloja za tekuci neuron (dx, dy, dz) sledeceg sloja, da li treba d ase sabiraju?
+                        
                         for (int fz = 0; fz < nextConvLayer.filterDepth; fz++) {
                             for (int fr = 0; fr < nextConvLayer.filterHeight; fr++) {
                                 for (int fc = 0; fc < nextConvLayer.filterWidth; fc++) {
-                                    row = ndRow * nextConvLayer.stride + (fr - filterCenterY);
-                                    col = ndCol * nextConvLayer.stride + (fc - filterCenterX);
+                                    final int row = ndRow * nextConvLayer.stride + (fr - filterCenterY);
+                                    final int col = ndCol * nextConvLayer.stride + (fc - filterCenterX);
 
                                     if (row < 0 || row >= outputs.getRows() || col < 0 || col >= outputs.getCols()) continue;
                                   
-                                    float derivative = ActivationFunctions.prime(activationType, outputs.get(row, col, ch));
+                                    final float derivative = ActivationFunctions.prime(activationType, outputs.get(row, col, ch));
                                     //   ... ovde treba razjasniti kako se mnozi sa weightsomm? da li ih treba sabirati
                                     deltas.add(row, col, ch, nextLayerDelta * nextConvLayer.filters[ndZ].get(fr, fc, fz) * derivative);
                                 }
@@ -345,7 +346,9 @@ public class ConvolutionalLayer extends AbstractLayer {
             deltaBiases[ch] = 0; // da li b ovo trebalo da bude 2d niz? verovatno ne
         }
         
-        float divisor = width * height; // * prev channels
+        final float divisor = width * height; // * prev channels
+        
+        // assumes that deltas from the next layer are allready propagated
         
         // 2. calculate weight changes in filters -ovo bi trebalo da je isto u svima je podesava tezine u filterima!
         for (int deltaRow = 0; deltaRow < deltas.getRows(); deltaRow++) {
@@ -376,8 +379,8 @@ public class ConvolutionalLayer extends AbstractLayer {
                                     deltaWeight = Optimizers.adaGrad(learningRate, grad, prevGradSums[ch].get(fr, fc, fz));
                                     break;
                             }
-                            deltaWeight /=divisor;
-                            deltaWeights[ch].add(fr, fc, fz, deltaWeight); //da li treba svi da se sabiraju? ako ovde tavim set onda ne nastaje NaN
+                            deltaWeight /=divisor;  // da li je ovo matematicki tacno? momentum baca nana ako ovog nema
+                            deltaWeights[ch].add(fr, fc, fz, deltaWeight); 
                         }
                     } 
                 }

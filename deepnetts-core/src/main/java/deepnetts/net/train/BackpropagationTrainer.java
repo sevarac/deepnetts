@@ -220,7 +220,7 @@ public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable
             prevTotalError = totalError;
             epochTime = endEpoch-startEpoch;
 
-            LOGGER.log(Level.INFO, "Iteration:" + iteration + ", TotalError:" + totalError +", ErrorChange:"+totalErrorChange); // Time:"+epochTime + "ms,
+            LOGGER.log(Level.INFO, "Iteration:" + iteration + ", Time:"+epochTime + "ms, TotalError:" + totalError +", ErrorChange:"+totalErrorChange); // Time:"+epochTime + "ms,
     //        LOG.log(Level.INFO, ConvNetLogger.getInstance().logNetwork(neuralNet));  
             
             fireTrainingEvent(TrainingEvent.Type.EPOCH_FINISHED);

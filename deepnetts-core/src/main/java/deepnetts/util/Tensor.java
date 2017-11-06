@@ -330,6 +330,10 @@ public class Tensor implements Serializable {
     public final void setValues(float... values) {     
         this.values = values;
     }
+    
+    public final void setValuesFrom(float[] src) {     
+        System.arraycopy(src, 0, values, 0, values.length);
+    }    
       
     public final int getCols() {
         return cols;

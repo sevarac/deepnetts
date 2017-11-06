@@ -111,24 +111,23 @@ public class FullyConnectedLayer extends AbstractLayer {
     public void forward() {
         // if previous layer is FullyConnected
         if (prevLayer instanceof FullyConnectedLayer) { 
-            for (int outCol = 0; outCol < outputs.getCols(); outCol++) {           // for all neurons/outputs in this layer
-                // calculate weighted sums of inputs
-                outputs.set(outCol, biases[outCol]);                               // first use (add) bias
-                for (int inCol = 0; inCol < inputs.getCols(); inCol++) {            // iterate all inputs from prev layer
-                    outputs.add(outCol, inputs.get(inCol) * weights.get(inCol, outCol));  // add weighted sum to outputs
+            
+            outputs.setValuesFrom(biases);                                                  // first use (add) biases to all outputs
+            for (int outCol = 0; outCol < outputs.getCols(); outCol++) {                    // for all neurons/outputs in this layer
+                for (int inCol = 0; inCol < inputs.getCols(); inCol++) {                    // iterate all inputs from prev layer
+                    outputs.add(outCol, inputs.get(inCol) * weights.get(inCol, outCol));    // and add weighted sum to outputs
                 } 
 
                 // apply activation function to all weigthed sums stored in outputs
                 outputs.set(outCol, ActivationFunctions.calc(activationType, outputs.get(outCol))); // ovo bi mogla da bude lambda ili Function()
-                // parallel apply activation function on each eleemnt of array
             }
         }
         
         // if previous layer is MaxPooling, Convolutional or input layer (2D or 3D) - TODO: posto je povezanost svi sa svima ovo mozda moze i kao 1d na 1d niz, verovatno je efikasnije
         else if ((prevLayer instanceof MaxPoolingLayer) || (prevLayer instanceof ConvolutionalLayer) || (prevLayer instanceof InputLayer)) { // povezi sve na sve                      
+
+            outputs.setValuesFrom(biases);                                        // first use (add) biases to all outputs
             for (int outCol = 0; outCol < outputs.getCols(); outCol++) {          // for all neurons/outputs in this layer
-                // calculate weighted sums of inputs
-                outputs.set(outCol, biases[outCol]);                              // first add (set to) bias
                 for (int inDepth = 0; inDepth < inputs.getDepth(); inDepth++) {   // iterate depth from prev/input layer
                     for (int inRow = 0; inRow < inputs.getRows(); inRow++) {      // iterate current channel by height (rows)
                         for (int inCol = 0; inCol < inputs.getCols(); inCol++) {   // iterate current feature map by width (cols)
@@ -213,11 +212,7 @@ public class FullyConnectedLayer extends AbstractLayer {
                 for (int inDepth = 0; inDepth < inputs.getDepth(); inDepth++) { // iterate all inputs from previous layer
                     for (int inRow = 0; inRow < inputs.getRows(); inRow++) {
                         for (int inCol = 0; inCol < inputs.getCols(); inCol++) { 
-                            float grad = deltas.get(deltaCol) * inputs.get(inRow, inCol, inDepth);  // da li je ovde greska treba ih sumitrati sve tri po dubini  // da li ove ulaze treba sabirati??? jer jedna celike ima ulaze iz tri prethodn akanala?
-                            //float deltaWeight = -learningRate * grad + momentum * prevDeltaWeights.get(inCol, deltaCol,  inRow, inDepth); // with momentum
-                            //float deltaWeight = Optimizers.sgd(learningRate, grad);           
-                           // float deltaWeight = Optimizers.momentum(learningRate, grad, momentum, prevDeltaWeights.get(inCol, deltaCol,  inRow, inDepth));  
-                           // (Optimizers::sgd, learningRate, grad) (methodRef, float ... )
+                            final float grad = deltas.get(deltaCol) * inputs.get(inRow, inCol, inDepth);  // da li je ovde greska treba ih sumitrati sve tri po dubini  // da li ove ulaze treba sabirati??? jer jedna celike ima ulaze iz tri prethodn akanala?
                             float deltaWeight=0;
                             switch(optimizer) {
                                 case SGD:
@@ -244,7 +239,6 @@ public class FullyConnectedLayer extends AbstractLayer {
                         deltaBias = Optimizers.sgd(learningRate, deltas.get(deltaCol));
                         break;
                     case MOMENTUM:
-                     //   deltaBias = Optimizers.sgd(learningRate, deltas.get(deltaCol));
                           deltaBias = Optimizers.momentum(learningRate, deltas.get(deltaCol), momentum, prevDeltaBiases[deltaCol]);
                         break;
                     case ADAGRAD:
@@ -252,9 +246,7 @@ public class FullyConnectedLayer extends AbstractLayer {
                         deltaBias = Optimizers.adaGrad(learningRate, deltas.get(deltaCol), prevBiasSums.get(deltaCol));                        
                         break;
                 }
-                
-                //deltaBiases[deltaCol] += -learningRate * deltas.get(deltaCol) + momentum * prevDeltaBiases[deltaCol];                                         
-                //deltaBiases[deltaCol] += Optimizers.sgd(learningRate, deltas.get(deltaCol));
+
                 deltaBiases[deltaCol] += deltaBias;
             }
         }

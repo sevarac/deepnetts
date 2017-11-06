@@ -32,20 +32,23 @@ import deepnetts.util.Tensor;
 public class MaxPoolingLayer extends AbstractLayer {
 
     /**
-     * Filter dimensions
+     * Filter dimensions.
      *
-     * commonly used 2x2 with stride 2 also seen 3x3 with stride 2
+     * Commonly used 2x2 with stride 2
      */
-    int filterWidth = 2, filterHeight = 2;
+    final int filterWidth, filterHeight;
 
     /**
-     * Filter step, commonly used 2
+     * Filter step.
+     * 
+     * Commonly used 2
      */
-    int stride = 2;
+    final int stride;
     
     /**
-     * Max activation idxs
-     * remember idx positions for max outputs (max index za svaku poziciju pooling filtera)
+     * Max activation idxs.
+     * 
+     * Remember idx of max output for each filter position. [channel][row][col][2]
      */
     int maxIdx[][][][]; 
        
@@ -57,7 +60,7 @@ public class MaxPoolingLayer extends AbstractLayer {
     }
          
     @Override
-    public void init() {
+    final public void init() {
         // max pooling layer can be only after Convolutional Layer
         if (!(prevLayer instanceof ConvolutionalLayer)) throw new RuntimeException("Illegal network architecture! MaxPooling can be only after convolutional layer!");
         
@@ -149,24 +152,23 @@ public class MaxPoolingLayer extends AbstractLayer {
         
         else if (nextLayer instanceof ConvolutionalLayer) {
             // iterate all deltas  in next layer   
-            ConvolutionalLayer nextConvLayer = (ConvolutionalLayer)nextLayer;
+            final ConvolutionalLayer nextConvLayer = (ConvolutionalLayer)nextLayer;
             deltas.fill(0);
-            int filterCenterX = (nextConvLayer.filterWidth-1) / 2;
-            int filterCenterY = (nextConvLayer.filterHeight-1) / 2;
+            final int filterCenterX = (nextConvLayer.filterWidth-1) / 2;
+            final int filterCenterY = (nextConvLayer.filterHeight-1) / 2;
                
            for (int outZ = 0; outZ < this.depth; outZ++) {  // iteriraj sve kanale/feature mape u ovom lejeru, odnosno odgovarajuce filtere u sledecem
                 // 1. Propagate deltas from next conv layer for max outputs from this layer
                 for (int ndz = 0; ndz < nextLayer.deltas.getDepth(); ndz++) { // iteriraj i 3-cu dimeziju sledeceg sloja
                     for (int ndr = 0; ndr < nextLayer.deltas.getRows(); ndr++) { // sledeci lejer delte po visini
                         for (int ndc = 0; ndc < nextLayer.deltas.getCols(); ndc++) { // sledeci lejer delte po sirini
-                            float nextLayerDelta = nextLayer.deltas.get(ndr, ndc, ndz); // uzmi deltu iz sledeceg sloja za tekuci neuron (dx, dy, dz) sledeceg sloja
+                            final float nextLayerDelta = nextLayer.deltas.get(ndr, ndc, ndz); // uzmi deltu iz sledeceg sloja za tekuci neuron (dx, dy, dz) sledeceg sloja
                                                         
-                           // int  outRow, outCol; // koordinate outputa iz ovog sloja
                             for (int fz = 0; fz < nextConvLayer.filterDepth; fz++) {
                                 for (int fr = 0; fr < nextConvLayer.filterHeight; fr++) {
                                     for (int fc = 0; fc < nextConvLayer.filterWidth; fc++) {
-                                        int outRow = ndr * nextConvLayer.stride + (fr - filterCenterY); 
-                                        int outCol = ndc * nextConvLayer.stride + (fc - filterCenterX);      
+                                        final int outRow = ndr * nextConvLayer.stride + (fr - filterCenterY); 
+                                        final int outCol = ndc * nextConvLayer.stride + (fc - filterCenterX);      
                                        // sta ja ovde zapravo radim, gore pise da su row i col koordinate output a= iz ovog sloja a dole se uzim ainput iz sledeceg...
                                         if (outRow < 0 || outRow >= outputs.getRows() || outCol < 0 || outCol >= outputs.getCols()) continue;
                                         // delte se propagairaju preko tezina, ne bi trebalo da se mnoze sa izvodom! - ne izvod nego delte sledeceg lejera
