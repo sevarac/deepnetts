@@ -23,6 +23,7 @@ package deepnetts.net.layers;
 
 import deepnetts.core.DeepNetts;
 import deepnetts.net.train.Optimizers;
+import deepnetts.util.DeepNettsException;
 import deepnetts.util.WeightsInit;
 import deepnetts.util.Tensor;
 import java.util.function.Function;
@@ -124,7 +125,12 @@ public class ConvolutionalLayer extends AbstractLayer {
      */
     @Override
     public void init() {
-        inputs = prevLayer.outputs;  // prev layer can only be input, max pooling and convolutional       
+        // prev layer can only be input, max pooling or convolutional   
+        if (!(prevLayer instanceof InputLayer || prevLayer instanceof ConvolutionalLayer || prevLayer instanceof MaxPoolingLayer)) {
+            throw new DeepNettsException("Illegal architecture: convolutional layer can be used only after input, convolutional or maxpooling layer");
+        }
+        
+        inputs = prevLayer.outputs;      
 
         width = (prevLayer.getWidth()) / stride;
         height = (prevLayer.getHeight()) / stride;

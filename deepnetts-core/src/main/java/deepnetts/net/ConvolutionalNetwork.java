@@ -29,8 +29,11 @@ import deepnetts.net.layers.InputLayer;
 import deepnetts.net.layers.MaxPoolingLayer;
 import deepnetts.net.layers.OutputLayer;
 import deepnetts.net.layers.SoftmaxOutputLayer;
+import deepnetts.net.loss.BinaryCrossEntropyLoss;
 import deepnetts.net.loss.CrossEntropyLoss;
 import deepnetts.net.loss.LossFunction;
+import deepnetts.net.loss.LossType;
+import deepnetts.net.loss.MeanSquaredErrorLoss;
 import deepnetts.util.RandomGenerator;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -196,6 +199,24 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             
             return this;
         }
+        
+        public Builder lossFunction(LossType lossType) {  
+            LossFunction loss = null;
+            switch(lossType) {
+                case MEAN_SQUARED_ERROR :
+                        loss = new MeanSquaredErrorLoss(neuralNet);
+                    break;
+                case CROSS_ENTROPY:
+                        if (neuralNet.getOutputLayer().getWidth() == 1)
+                            loss = new BinaryCrossEntropyLoss(neuralNet);
+                        else 
+                            loss = new CrossEntropyLoss(neuralNet);
+                    break;                        
+            }
+            neuralNet.setLossFunction(loss);
+            
+            return this;
+        }           
         
         public Builder randomSeed(long seed) {
             RandomGenerator.getDefault().initSeed(seed);
