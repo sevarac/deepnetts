@@ -112,7 +112,7 @@ public class FullyConnectedLayer extends AbstractLayer {
         // if previous layer is FullyConnected
         if (prevLayer instanceof FullyConnectedLayer) { 
             
-            outputs.setValuesFrom(biases);                                                  // first use (add) biases to all outputs
+            outputs.copyFrom(biases);                                                  // first use (add) biases to all outputs
             for (int outCol = 0; outCol < outputs.getCols(); outCol++) {                    // for all neurons/outputs in this layer
                 for (int inCol = 0; inCol < inputs.getCols(); inCol++) {                    // iterate all inputs from prev layer
                     outputs.add(outCol, inputs.get(inCol) * weights.get(inCol, outCol));    // and add weighted sum to outputs
@@ -126,7 +126,7 @@ public class FullyConnectedLayer extends AbstractLayer {
         // if previous layer is MaxPooling, Convolutional or input layer (2D or 3D) - TODO: posto je povezanost svi sa svima ovo mozda moze i kao 1d na 1d niz, verovatno je efikasnije
         else if ((prevLayer instanceof MaxPoolingLayer) || (prevLayer instanceof ConvolutionalLayer) || (prevLayer instanceof InputLayer)) { // povezi sve na sve                      
 
-            outputs.setValuesFrom(biases);                                        // first use (add) biases to all outputs
+            outputs.copyFrom(biases);                                        // first use (add) biases to all outputs
             for (int outCol = 0; outCol < outputs.getCols(); outCol++) {          // for all neurons/outputs in this layer
                 for (int inDepth = 0; inDepth < inputs.getDepth(); inDepth++) {   // iterate depth from prev/input layer
                     for (int inRow = 0; inRow < inputs.getRows(); inRow++) {      // iterate current channel by height (rows)
@@ -191,7 +191,6 @@ public class FullyConnectedLayer extends AbstractLayer {
                         deltaBias = Optimizers.sgd(learningRate, deltas.get(dCol));
                         break;
                     case MOMENTUM:
-                        //deltaBias = Optimizers.sgd(learningRate, deltas.get(dCol));
                         deltaBias = Optimizers.momentum(learningRate, deltas.get(dCol), momentum, prevDeltaBiases[dCol]);
                         break;
                     case ADAGRAD:
@@ -208,31 +207,31 @@ public class FullyConnectedLayer extends AbstractLayer {
                  (prevLayer instanceof ConvolutionalLayer) || 
                  (prevLayer instanceof MaxPoolingLayer)) {
             
-            for (int deltaCol = 0; deltaCol < deltas.getCols(); deltaCol++) { // for all neurons/deltas in this layer
+            
+            for (int deltaCol = 0; deltaCol < deltas.getCols(); deltaCol++) { // for all neurons/deltas in this layer                
                 for (int inDepth = 0; inDepth < inputs.getDepth(); inDepth++) { // iterate all inputs from previous layer
                     for (int inRow = 0; inRow < inputs.getRows(); inRow++) {
-                        for (int inCol = 0; inCol < inputs.getCols(); inCol++) { 
+                        for (int inCol = 0; inCol < inputs.getCols(); inCol++) {
                             final float grad = deltas.get(deltaCol) * inputs.get(inRow, inCol, inDepth);  // da li je ovde greska treba ih sumitrati sve tri po dubini  // da li ove ulaze treba sabirati??? jer jedna celike ima ulaze iz tri prethodn akanala?
                             float deltaWeight=0;
                             switch(optimizer) {
                                 case SGD:
-                                        deltaWeight = Optimizers.sgd(learningRate, grad);
+                                    deltaWeight = Optimizers.sgd(learningRate, grad);
                                     break;
                                 case MOMENTUM:
-                                     //deltaWeight = Optimizers.sgd(learningRate, grad);
-                                       deltaWeight = Optimizers.momentum(learningRate, grad, momentum, prevDeltaWeights.get(inCol, inRow, inDepth, deltaCol));// 
+                                    deltaWeight = Optimizers.momentum(learningRate, grad, momentum, prevDeltaWeights.get(inCol, inRow, inDepth, deltaCol));// 
                                     break;
                                 case ADAGRAD:
                                         prevGradSums.add(inCol, deltaCol,  inRow, inDepth, grad*grad);
-                                        deltaWeight = Optimizers.adaGrad(learningRate, grad, prevGradSums.get(inCol, inRow, inDepth, deltaCol));                                                                         
+                                    deltaWeight = Optimizers.adaGrad(learningRate, grad, prevGradSums.get(inCol, inRow, inDepth, deltaCol));
                                     break;
-                            }                           
-                            
-                            deltaWeights.add(inCol, inRow, inDepth, deltaCol, deltaWeight);                      
+                            }
+
+                            deltaWeights.add(inCol, inRow, inDepth, deltaCol, deltaWeight);
                         }
                     }
-                }            
-                
+                }
+
               float deltaBias=0;
                 switch (optimizer) {
                     case SGD:
@@ -257,43 +256,19 @@ public class FullyConnectedLayer extends AbstractLayer {
         if (batchMode) { // podeli Delta weights sa brojem uzoraka odnosno backward passova
             deltaWeights.div(batchSize);
             Tensor.div(deltaBiases, batchSize);
-        }        
-        
-        if (prevLayer instanceof FullyConnectedLayer) {            
-            Tensor.copy(deltaWeights, prevDeltaWeights); // save as prev delta weight
-            Tensor.copy(deltaBiases, prevDeltaBiases);
-            
-            weights.add(deltaWeights);        
-            Tensor.add(biases, deltaBiases);                        
         }
-                
-        //  ovo je kad je povezan na 2D ili 3d sloj iza - onde je weights 3d ili 4d verovatno i ovo moze samo sa Tensor.add i Tensor.copy za prevDeltaWeights
-        if ((prevLayer instanceof MaxPoolingLayer) || (prevLayer instanceof ConvolutionalLayer) || (prevLayer instanceof InputLayer)) {
-//            for (int wFourth = 0; wFourth < weights.getFourthDim(); wFourth++) { 
-//                for (int wDepth = 0; wDepth < weights.getDepth(); wDepth++) { 
-//                    for (int wRow = 0; wRow < weights.getRows(); wRow++) {                    
-//                         for (int wCol = 0; wCol < weights.getCols(); wCol++) {                          
-//                            prevDeltaWeights.set(wRow, wCol, wDepth, wFourth, deltaWeights.get(wRow, wCol, wDepth, wFourth));    // remmember as prev change in order to use it for momentum                                                         
-//                            weights.add(wRow, wCol, wDepth, wFourth, deltaWeights.get(wRow, wCol, wDepth, wFourth)); // can also use it as single for sub, but prev will get lost
-//                        }
-//                    }
-//                }
-//            }
-//          ovo radi bolje nego ovo iznad a trebalo bi da je isto            
-            Tensor.copy(deltaWeights, prevDeltaWeights); // ove dve se mogu raditi paraleln i nezavisno
-            weights.add(deltaWeights);
-      
-            Tensor.copy(deltaBiases, prevDeltaBiases);
-            Tensor.add(biases, deltaBiases);
-            
-        }
-        
+
+        Tensor.copy(deltaWeights, prevDeltaWeights); // save as prev delta weight
+        Tensor.copy(deltaBiases, prevDeltaBiases);
+
+        weights.add(deltaWeights);
+        Tensor.add(biases, deltaBiases);
+
         if (batchMode) {
             deltaWeights.fill(0);
             Tensor.fill(deltaBiases, 0);
         }
-        
-        
+
     }
 
 }

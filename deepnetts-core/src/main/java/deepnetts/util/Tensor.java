@@ -67,7 +67,7 @@ public class Tensor implements Serializable {
         this.dimensions = 2;        
         this.values = new float[rows*cols];
 
-        // copy array to single dim
+        // copyFrom array to single dim
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 set(row, col, vals[row][col]);
@@ -90,7 +90,7 @@ public class Tensor implements Serializable {
         this.dimensions = 3;        
         this.values = new float[rows*cols*depth];
 
-        // copy array
+        // copyFrom array
         for (int z = 0; z < depth; z++) {
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
@@ -110,7 +110,7 @@ public class Tensor implements Serializable {
         this.dimensions = 4;        
         this.values = new float[rows*cols*depth*fourthDim];
 
-        // copy array
+        // copyFrom array
         for (int f = 0; f < fourthDim; f++) {
             for (int z = 0; z < depth; z++) {
                 for (int row = 0; row < rows; row++) {
@@ -331,7 +331,7 @@ public class Tensor implements Serializable {
         this.values = values;
     }
     
-    public final void setValuesFrom(float[] src) {     
+    public final void copyFrom(float[] src) {     
         System.arraycopy(src, 0, values, 0, values.length);
     }    
       
