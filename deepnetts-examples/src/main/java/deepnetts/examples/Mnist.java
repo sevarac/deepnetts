@@ -76,7 +76,7 @@ public class Mnist {
                                         .inputLayer(imageWidth, imageHeight)
                                         .convolutionalLayer(5, 3)
                                         .maxPoolingLayer(2, 2)        
-                                        .convolutionalLayer(3, 6) 
+                                        .convolutionalLayer(5, 6) 
                                         .maxPoolingLayer(2, 2)       
                                         .fullyConnectedLayer(30)
                                         .fullyConnectedLayer(20)
