@@ -24,8 +24,6 @@ package deepnetts.examples;
 import deepnetts.data.ImageSet;
 import deepnetts.net.ConvolutionalNetwork;
 import deepnetts.net.layers.ActivationType;
-import deepnetts.net.layers.SoftmaxOutputLayer;
-import deepnetts.net.loss.CrossEntropyLoss;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.OptimizerType;
 import deepnetts.util.DeepNettsException;
