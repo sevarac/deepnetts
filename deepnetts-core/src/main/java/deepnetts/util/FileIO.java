@@ -21,6 +21,7 @@
     
 package deepnetts.util;
 
+import deepnetts.core.DeepNetts;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.layers.AbstractLayer;
 import deepnetts.net.ConvolutionalNetwork;
@@ -34,6 +35,7 @@ import deepnetts.net.layers.LayerType;
 import deepnetts.net.layers.MaxPoolingLayer;
 import deepnetts.net.layers.OutputLayer;
 import deepnetts.net.layers.SoftmaxOutputLayer;
+import deepnetts.net.loss.LossFunction;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +46,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -95,11 +101,19 @@ public class FileIO {
         return nnet;
     }    
     
-    public static String  toJson(ConvolutionalNetwork convNet) {
-        JSONObject convNetJson = new JSONObject();
+
+    /**
+     * Returns JSON representation of specified neural network object.
+     * TODO: add biases
+     * 
+     * @param nnet
+     * @return 
+     */
+    public static String  toJson(NeuralNetwork nnet) {
+        JSONObject json = new JSONObject();
         JSONArray layers = new JSONArray();
         
-        InputLayer inputLayer= convNet.getInputLayer();
+        InputLayer inputLayer= nnet.getInputLayer();
                 
         JSONObject inputLayerJson = new JSONObject();
         inputLayerJson.put("layerType", LayerType.INPUT.toString());
@@ -108,7 +122,7 @@ public class FileIO {
         inputLayerJson.put("channels", inputLayer.getDepth());                
         layers.put(inputLayerJson);             
         
-        for(AbstractLayer layer : convNet.getLayers()){
+        for(AbstractLayer layer : nnet.getLayers()){
             if (layer instanceof ConvolutionalLayer) {
                 ConvolutionalLayer convLayer = (ConvolutionalLayer)layer;
                 JSONObject convLayerJson = new JSONObject();
@@ -118,6 +132,14 @@ public class FileIO {
                 convLayerJson.put("channels", convLayer.getDepth()); // channels
                 convLayerJson.put("stride", convLayer.getStride());
                 convLayerJson.put("activation", convLayer.getActivationType());     
+                JSONArray filters = new JSONArray();
+                for(Tensor filter: convLayer.getFilters()) {
+                    filters.put(filter);
+                }
+                convLayerJson.put("biases", convLayer.getBiases());
+                
+                convLayerJson.put("filters",filters);
+                                
                 layers.put(convLayerJson);   
             } else if (layer instanceof MaxPoolingLayer) {
                 MaxPoolingLayer maxPooling= (MaxPoolingLayer)layer;
@@ -132,56 +154,68 @@ public class FileIO {
                 fullyConnLayerJson.put("layerType", LayerType.FULLYCONNECTED);
                 fullyConnLayerJson.put("width", layer.getWidth());
                 fullyConnLayerJson.put("activation", layer.getActivationType());
+                fullyConnLayerJson.put("weights", layer.getWeights());
+                fullyConnLayerJson.put("biases", layer.getBiases());
                 layers.put(fullyConnLayerJson);   
             } else if (layer instanceof SoftmaxOutputLayer) {
                 JSONObject outputLayerJson = new JSONObject();
                 outputLayerJson.put("layerType", LayerType.OUTPUT);
                 outputLayerJson.put("width", layer.getWidth());
                 outputLayerJson.put("activation", layer.getActivationType());
+                outputLayerJson.put("weights", layer.getWeights());
+                outputLayerJson.put("biases", layer.getBiases());
                 layers.put(outputLayerJson);  
             } else if (layer instanceof OutputLayer) {
                 JSONObject outputLayerJson = new JSONObject();
                 outputLayerJson.put("layerType", LayerType.OUTPUT);
                 outputLayerJson.put("width", layer.getWidth());
                 outputLayerJson.put("activation", layer.getActivationType());
+                outputLayerJson.put("weights", layer.getWeights());
+                outputLayerJson.put("biases", layer.getBiases());
                 layers.put(outputLayerJson);  
             }            
         }
         
-        convNetJson.put("layers", layers);
+        json.put("networkType", nnet.getClass().getName());
+        json.put("layers", layers);
+        json.put("randomSeed", 123);
+        json.put("lossFunction", nnet.getLossFunction().getClass().getName());      
 
-        return convNetJson.toString();
+        return json.toString();
     }
     
-     public static ConvolutionalNetwork createFromJson(String jsonStr) {
+     public static <T extends NeuralNetwork> T createFromJson(String jsonStr, Class<T> clazz) {
         JSONObject obj = new JSONObject(jsonStr);
-        return createFromJson(obj);
+        return createFromJson(obj, clazz);
      }
      
-     public static ConvolutionalNetwork createFromJson(File file) throws FileNotFoundException, IOException {
+     public static <T extends NeuralNetwork> T createFromJson(File file, Class<T> clazz) throws FileNotFoundException, IOException {
          BufferedReader br = new BufferedReader(new FileReader(file));
          StringBuilder sb = new StringBuilder();
          String line;
          while((line = br.readLine()) != null) {
              sb.append(line).append(System.lineSeparator());
          }
-         return createFromJson(sb.toString());
+         return createFromJson(sb.toString(), clazz);
      }
     
-    public static ConvolutionalNetwork createFromJson(JSONObject jsonObj) {
+    public static <T extends NeuralNetwork> T createFromJson(JSONObject jsonObj, Class<T> clazz) {
         JSONArray jsonLayers = jsonObj.getJSONArray("layers");
-        // dodaj loss funkciju i vidi da li imaju jos neki parametri /slucajevi koje sam propustio
-        
+                
+        String networkType = jsonObj.getString("networkType");                
+                
+        // switch network type here and use corresponding builder        
         ConvolutionalNetwork.Builder convNetBuilder = new ConvolutionalNetwork.Builder();
+                
+        List<String> allWeights = new ArrayList<>();
+        List<double[]> allBiases = new ArrayList<>(); // still not implemented
         
+        int width, height, channels, filterWidth, filterHeight, stride;
+        String activation;    
         
-        int width, height, channels, filterWidth, filterHeight, stride, padding;
-        String activation;
-        
-        // random seed, loss 
         for(Object jsonLayerObject : jsonLayers) {
             JSONObject layerObj = (JSONObject)jsonLayerObject;
-            
+                                    
             switch(LayerType.valueOf( layerObj.getString("layerType").toUpperCase() ) ) {
                 case INPUT :
                         width = layerObj.getInt("width");
@@ -195,6 +229,13 @@ public class FileIO {
                         stride = layerObj.getInt("stride");
                         channels = layerObj.getInt("channels");   
                         activation = layerObj.getString("activation").toUpperCase();      
+                        JSONArray filters = layerObj.getJSONArray("filters");
+                        StringBuilder sb = new StringBuilder();
+                        for(Object filter : filters ) {
+                            sb.append(filter).append(";");
+                        }
+                        allWeights.add(sb.toString());                        
+                        
                         convNetBuilder.convolutionalLayer(filterWidth, filterHeight, channels, ActivationType.valueOf(activation));                    
                 break;
                 case MAXPOOLING :
@@ -205,12 +246,16 @@ public class FileIO {
                 break;
                 case FULLYCONNECTED :
                         width = layerObj.getInt("width");
-                        activation = layerObj.getString("activation").toUpperCase();                          
-                        convNetBuilder.fullyConnectedLayer(width, ActivationType.valueOf(activation));                            
+                        activation = layerObj.getString("activation").toUpperCase();                   
+                        String weights = layerObj.getString("weights");
+                        allWeights.add(weights);                        
+                        convNetBuilder.fullyConnectedLayer(width, ActivationType.valueOf(activation));                                                                                                    
                 break;                
                 case OUTPUT :
                         width = layerObj.getInt("width");
                         activation = layerObj.getString("activation").toUpperCase();
+                        weights = layerObj.getString("weights");
+                        allWeights.add(weights);                           
                                               
                         if (activation.equals(ActivationType.SIGMOID.toString())) {
                             convNetBuilder.outputLayer(width, OutputLayer.class);                  
@@ -222,7 +267,22 @@ public class FileIO {
                 break;            
             }            
         }
+                
+        int randomSeed = jsonObj.getInt("randomSeed");
+        String lossFunction = jsonObj.getString("lossFunction");
         
-        return convNetBuilder.build();
+        try {
+            convNetBuilder.randomSeed(randomSeed)
+                    .lossFunction((Class<? extends LossFunction>) Class.forName(lossFunction));
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DeepNetts.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        
+        ConvolutionalNetwork neuralNet = convNetBuilder.build();
+        
+       // neuralNet.setWeights(allWeights); // if weights are loaded override random init
+                 
+        return clazz.cast(neuralNet);
     }    
 }

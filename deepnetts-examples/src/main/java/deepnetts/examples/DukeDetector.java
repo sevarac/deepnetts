@@ -34,8 +34,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import visrec.classifier.ClassificationResult;
 import visrec.classifier.ClassificationResults;
 
@@ -47,7 +48,7 @@ import visrec.classifier.ClassificationResults;
  */
 public class DukeDetector {
 
-    static final Logger LOGGER = Logger.getLogger(DeepNetts.class.getName());
+     static final Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());   
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
         int imageWidth = 64;
@@ -67,7 +68,6 @@ public class DukeDetector {
         imageSet.zeroMean();
         imageSet.shuffle();
 
-        LOGGER.info("Done!");
         LOGGER.info("Creating neural network...");
 
         ConvolutionalNetwork convNet = new ConvolutionalNetwork.Builder()
@@ -75,13 +75,12 @@ public class DukeDetector {
                 .convolutionalLayer(5, 5, 1, ActivationType.TANH)
                 .maxPoolingLayer(2, 2, 2)
                 .fullyConnectedLayer(10, ActivationType.TANH)
-                .outputLayer(1, ActivationType.SIGMOID)
+                .addOutputLayer(1, ActivationType.SIGMOID)
                 .lossFunction(BinaryCrossEntropyLoss.class)
                 .build();
 
         convNet.setOutputLabels(imageSet.getLabels());
 
-        LOGGER.info("Done!");
         LOGGER.info("Training neural network");
 
         // create a set of convolutional networks and do training, crossvalidation and performance evaluation

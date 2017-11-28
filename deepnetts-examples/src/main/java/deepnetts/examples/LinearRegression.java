@@ -31,8 +31,8 @@ import deepnetts.net.train.BackpropagationTrainer;
 /**
  * Minimal example for linear regression using MultiLayerPerceptron.
  * Fits a straight line through the data.
- * Uses a single layer with one output and linear activation function, and Mean Squared Error for Loss function.
- * You can use linear regression to roughly estimate a global trend in data.
+ Uses a single addLayer with one output and linear activation function, and Mean Squared Error for Loss function.
+ You can use linear regression to roughly estimate a global trend in data.
  * 
  * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
@@ -43,8 +43,8 @@ public class LinearRegression {
         DataSet dataSet =null; // get data from some file or method        
         
         NeuralNetwork neuralNet = MultiLayerPerceptron.builder()
-                                    .inputLayer(5)
-                                    .outputLayer(1, ActivationType.LINEAR)
+                                    .addInputLayer(5)
+                                    .addOutputLayer(1, ActivationType.LINEAR)
                                     .lossFunction(LossType.MEAN_SQUARED_ERROR)
                                     .build();
                        

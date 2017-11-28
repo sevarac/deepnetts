@@ -26,16 +26,19 @@ import deepnetts.net.ConvolutionalNetwork;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 import javax.imageio.ImageIO;
+import visrec.classifier.AbstractImageClassifier;
 import visrec.classifier.ClassificationResult;
 import visrec.classifier.ClassificationResults;
+import visrec.classifier.Classifier;
 
 /**
  * Example how to create image classifier using ConvolutionalNetwork
  * 
  * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
-public class DeepNettsImageClassifier {
+public class DeepNettsImageClassifier extends AbstractImageClassifier<BufferedImage, ConvolutionalNetwork> {
 
     private final ConvolutionalNetwork convNet;
 
@@ -48,6 +51,7 @@ public class DeepNettsImageClassifier {
      * @param image
      * @return
      */
+    @Override
     public ClassificationResults<ClassificationResult> classify(BufferedImage image) {
         ClassificationResults<ClassificationResult> results = new ClassificationResults();
 
@@ -69,6 +73,7 @@ public class DeepNettsImageClassifier {
         return results;
     }
     
+    @Override
      public ClassificationResults<ClassificationResult> classify(File imageFile) throws IOException {
          BufferedImage image = ImageIO.read(imageFile);
          return classify(image);
@@ -100,4 +105,10 @@ public class DeepNettsImageClassifier {
 //       
 //       return results;        
 //    }
+
+    @Override
+    public Classifier build(Properties prop) {
+        // build classifier from specified propertiers
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

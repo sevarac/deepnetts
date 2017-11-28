@@ -31,8 +31,8 @@ import deepnetts.net.train.BackpropagationTrainer;
 /**
  * Minimal example for logistic regression using MultiLayerPerceptron.
  * Can perform binary classification (single output true/false)
- * Uses only input and output layer with sigmoid activation function
- * Just specify number of inputs and provide data set
+ Uses only input and output addLayer with sigmoid activation function
+ Just specify number of inputs and provide data set
  * 
  * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
@@ -44,8 +44,8 @@ public class LogisticRegression {
         DataSet dataSet =null; // get data from some file or method   
         
         NeuralNetwork neuralNet = MultiLayerPerceptron.builder()
-                .inputLayer(5)
-                .outputLayer(1, ActivationType.SIGMOID)
+                .addInputLayer(5)
+                .addOutputLayer(1, ActivationType.SIGMOID)
                 .lossFunction(LossType.MEAN_SQUARED_ERROR)
                 .build();
         

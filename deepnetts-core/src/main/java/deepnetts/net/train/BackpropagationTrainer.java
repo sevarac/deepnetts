@@ -27,16 +27,11 @@ import deepnetts.net.layers.AbstractLayer;
 import deepnetts.data.DataSet;
 import deepnetts.data.DataSetItem;
 import deepnetts.net.loss.LossFunction;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class implements training algorithm for convolutional neural network.
@@ -80,54 +75,38 @@ public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable
     
     List<TrainingListener> listeners = new ArrayList<>();
     
+    public static final String PROP_MAX_ERROR = "maxError";
+    public static final String PROP_MAX_ITERATIONS = "maxIterations";
+    public static final String PROP_LEARNING_RATE = "learningRate";
+    public static final String PROP_MOMENTUM = "momentum";
+    public static final String PROP_BATCH_MODE = "batchMode";
     
     /**
      * Network to train
      */
     private NeuralNetwork neuralNet;
 
-    private final static Logger LOGGER = Logger.getLogger(DeepNetts.class.getName());
-    static {
-        try {
-      //      LogManager.getLogManager().reset(); // nemoj da skidas defaultnog loggera nego mu setuj formatera. Zato jer ovo skine i loggera i dnd
-            Handler fh = new FileHandler("deepnetts_training.log"); // ConsoleHandler();
-
-            fh.setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    return record.getMessage() + System.lineSeparator();
-                }});
-                      
-         //   Handler ch = new ConsoleHandler();
-//            ch.setFormatter(new Formatter() {
-//                @Override
-//                public String format(LogRecord record) {
-//                    return record.getMessage() + System.lineSeparator();
-//                }});
-            
-            LOGGER.getParent().getHandlers()[0].setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    return record.getMessage() + System.lineSeparator();
-                }
-            });
-            
-            LOGGER.addHandler(fh);
-            LOGGER.setLevel(Level.ALL);
-        } catch (IOException ex) {
-            Logger.getLogger(BackpropagationTrainer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(BackpropagationTrainer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());    
+    
 
     public BackpropagationTrainer(NeuralNetwork neuralNet) { 
         
-        if (neuralNet == null) throw new IllegalArgumentException("Argument convNet cannot be null!");
+        if (neuralNet == null) throw new IllegalArgumentException("Parameter neuralNet cannot be null!");
         
         this.neuralNet = neuralNet;
     }
+    
+    public BackpropagationTrainer(NeuralNetwork neuralNet, Properties prop) { 
+        this(neuralNet);
+                
+        this.maxError = Float.parseFloat(prop.getProperty(PROP_MAX_ERROR));
+        this.maxIterations = Integer.parseInt(prop.getProperty(PROP_MAX_ITERATIONS));
+        this.learningRate = Float.parseFloat(prop.getProperty(PROP_LEARNING_RATE));
+        this.momentum = Float.parseFloat(prop.getProperty(PROP_MOMENTUM));
+        this.batchMode = Boolean.parseBoolean(prop.getProperty(PROP_BATCH_MODE));       
+        // TODO: set optimizer type
+        
+    }    
 
     
     /**
@@ -177,8 +156,6 @@ public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable
             totalError = 0; // lossFunction.reset();
             int sampleCounter = 0;
             
-          //  LOGGER.log(Level.INFO, "Iteration:{0}", new Object[]{iteration});
-
             startEpoch = System.currentTimeMillis();
                       
             for (DataSetItem dataSetItem : dataSet) {       // for all items in dataset 
@@ -220,7 +197,7 @@ public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable
             prevTotalError = totalError;
             epochTime = endEpoch-startEpoch;
 
-            LOGGER.log(Level.INFO, "Iteration:" + iteration + ", Time:"+epochTime + "ms, TotalError:" + totalError +", ErrorChange:"+totalErrorChange); // Time:"+epochTime + "ms,
+            LOGGER.info("Iteration:" + iteration + ", Time:"+epochTime + "ms, TotalError:" + totalError +", ErrorChange:"+totalErrorChange); // Time:"+epochTime + "ms,
     //        LOG.log(Level.INFO, ConvNetLogger.getInstance().logNetwork(neuralNet));  
             
             fireTrainingEvent(TrainingEvent.Type.EPOCH_FINISHED);

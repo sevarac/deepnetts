@@ -37,7 +37,7 @@ import java.io.IOException;
 
 /**
  * Iris Classification Problem.
- * Using sigmoid activation in output layer and mse as an error function.
+ * Using sigmoid activation in output addLayer and mse as an error function.
  * 
  * @author Zoran Sevarac <zoran.sevarac@smart4net.co>
  */
@@ -48,10 +48,10 @@ public class IrisClassificationMse {
         DataSet dataSet = loadIrisDataSet();
         
         MultiLayerPerceptron neuralNet = MultiLayerPerceptron.builder()
-                                        .inputLayer(4)
-                                        .fullyConnectedLayer(30)
-                                        .fullyConnectedLayer(8)
-                                        .outputLayer(3, OutputLayer.class)
+                                        .addInputLayer(4)
+                                        .addFullyConnectedLayer(30)
+                                        .addFullyConnectedLayer(8)
+                                        .addOutputLayer(3, OutputLayer.class)
                                         .lossFunction(MeanSquaredErrorLoss.class)
                                         .randomSeed(123)
                                         .build();

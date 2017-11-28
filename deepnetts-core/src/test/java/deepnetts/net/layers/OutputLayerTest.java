@@ -15,6 +15,9 @@ import static org.junit.Assert.*;
 public class OutputLayerTest {
     
 
+    /**
+     * Tests forward pass using default sigmoid activation function.
+     */
     @Test
     public void testForward() {
         
@@ -45,12 +48,70 @@ public class OutputLayerTest {
         assertArrayEquals(actualOutputs.getValues(), expectedOutputs.getValues(), 1e-7f);
     }
 
+    @Test
+    public void testForwardWithLinearActivation() {        
+        // initialize weights with specified random seed
+        RandomGenerator.getDefault().initSeed(123); // init random generator with seed that will be used for weights2 (same effect as line above)
+        
+        // input vector for this layer
+        Tensor input = new Tensor(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
+        Tensor weights = new Tensor(5, 10); // weights matrix   
+        WeightsInit.uniform(weights.getValues(), 5); // "[0.19961303, -0.23501621, 0.43907326, -0.17747784, -0.22066136, 0.06630343, 0.097314, -0.21566293, 0.273578, 0.10945064, 0.33577937, 0.044093937, 0.19323963, -0.3021235, -0.38288906, 0.16261822, 0.26498383, -0.207817, 0.070406556, -0.23022851, 0.36503863, 0.091478825, -0.31402034, -0.25345784, 0.42504954, -0.037393004, -0.38854277, -0.36758634, -0.38503492, -0.33786723, -0.36604232, -0.14479709, -0.06755906, 0.38639867, 0.3348655, 0.15910655, 0.06717491, -0.4455302, -0.09257606, -1.219213E-4, -0.21616945, 0.43006968, -0.31055218, 0.2699433, -0.214278, 0.25471163, -0.03427276, -0.43431506, -0.054469943, -0.23747501]"
+       
+        // create prev fc layer with 5 outputs
+        FullyConnectedLayer prevLayer = new FullyConnectedLayer(5);        
+        prevLayer.setOutputs(input);
+                
+        // create instance of layer to test
+        OutputLayer instance = new OutputLayer(10, ActivationType.LINEAR);
+        instance.setPrevLayer(prevLayer);        
+        instance.init(); // init weights structure
+        instance.setWeights(weights); // set weights2 values
+        instance.setBiases(new float[] {0.1f, 0.2f, 0.3f, 0.11f, 0.12f, 0.13f, 0.21f, 0.22f, 0.23f, 0.24f}); // set bias values
+        
+        // do the forward pass
+        instance.forward();        
+        // get layer outpputs
+        Tensor actualOutputs = instance.getOutputs();   // "[0.042127118, 0.36987683, 0.10604945, 0.24532129, 0.17567813, 0.34893453, 0.16589889, -0.3487752, 0.09166323, -0.015247092]"
+        Tensor expectedOutputs = new Tensor( 0.04212712f, 0.3698768f, 0.10604945f, 0.24532129f, 0.17567812f, 0.34893453f, 0.16589892f, -0.34877524f, 0.09166324f, -0.01524709f);
+
+        assertArrayEquals(actualOutputs.getValues(), expectedOutputs.getValues(), 1e-7f);
+    }    
+    
+    @Test
+    public void testForwardWithTanhActivation() {
+        
+        RandomGenerator.getDefault().initSeed(123);         // initialize weights using specified random seed
+        Tensor input = new Tensor(0.1f, 0.2f, 0.3f, 0.4f, 0.5f); // input vector for this layer (output for previous layer)
+        Tensor weights = new Tensor(5, 10); 
+        WeightsInit.uniform(weights.getValues(), 5); // "[0.19961303, -0.23501621, 0.43907326, -0.17747784, -0.22066136, 0.06630343, 0.097314, -0.21566293, 0.273578, 0.10945064, 0.33577937, 0.044093937, 0.19323963, -0.3021235, -0.38288906, 0.16261822, 0.26498383, -0.207817, 0.070406556, -0.23022851, 0.36503863, 0.091478825, -0.31402034, -0.25345784, 0.42504954, -0.037393004, -0.38854277, -0.36758634, -0.38503492, -0.33786723, -0.36604232, -0.14479709, -0.06755906, 0.38639867, 0.3348655, 0.15910655, 0.06717491, -0.4455302, -0.09257606, -1.219213E-4, -0.21616945, 0.43006968, -0.31055218, 0.2699433, -0.214278, 0.25471163, -0.03427276, -0.43431506, -0.054469943, -0.23747501]" 
+        
+        // create prev fc layer with 5 outputs
+        FullyConnectedLayer prevLayer = new FullyConnectedLayer(5);        
+        prevLayer.setOutputs(input); // and set its ouput that will be used as input for next layer
+                
+        // create instance of layer to test
+        OutputLayer instance = new OutputLayer(10, ActivationType.TANH);
+        instance.setPrevLayer(prevLayer);        
+        instance.init(); // init weights structures
+        instance.setWeights(weights); // set weights values
+        instance.setBiases(new float[] {0.1f, 0.2f, 0.3f, 0.11f, 0.12f, 0.13f, 0.21f, 0.22f, 0.23f, 0.24f}); // set bias values
+        
+        // run forward pass
+        instance.forward();
+        
+        // get layer outpputs
+        Tensor actualOutputs = instance.getOutputs();
+        Tensor expectedOutputs = new Tensor( 0.0421022217154f,  0.353883947707f,  0.105653667421f,  0.240515590945f,  0.173892848898f,  0.335430293333f,  0.16439350833f,  -0.335288915023f,  0.0914073785089f,  -0.0152459102444f);
+        
+        assertArrayEquals(actualOutputs.getValues(), expectedOutputs.getValues(), 1e-7f);
+    }    
+    
     /**
      * These values are for backward pass for MSE loss function.
-     * TODO: Fix this tests, it breaks
      */
     @Test
-    public void testBackwardMseLoss() {
+    public void testBackwardSigmoidMseLoss() {
         RandomGenerator.getDefault().initSeed(123); // init random generator with seed that will be used for weights (same effect as line above)
         
         // input vector for this layer
@@ -78,9 +139,90 @@ public class OutputLayerTest {
         Tensor expResult = new Tensor(10); // [0.01052711  0.08937729  0.02643796   0.06041675   0.0435824    0.08463131  0.04119066  -0.084595  0.02286774   -0.00381155] from num py test
         expResult.setValues( 0.01052711f,  0.08937729f,  0.02643796f,  0.06041675f,  0.0435824f,   0.08463131f,  0.04119066f, -0.084595f, 0.02286774f, -0.00381155f);
         
-        assertArrayEquals(expResult.getValues(), result.getValues(), 1e-8f);
+        assertArrayEquals(expResult.getValues(), result.getValues(), 1e-8f);        
+        
+        Tensor deltaWeights = instance.getDeltaWeight();
+        Tensor expDeltaWeights = new Tensor(-1.05271092E-4f, -8.93772906E-4f, -2.64379592E-4f, -6.04167468E-4f, -4.35823960E-4f, -8.46313123E-4f, -4.11906628E-4f, 8.45950039E-4f, -2.28677425E-4f, 3.81155098E-5f,  -2.10542184E-4f, -1.78754581E-3f, -5.28759185E-4f, -1.20833494E-3f, -8.71647919E-4f, -1.69262625E-3f, -8.23813255E-4f,  1.69190008E-3f, -4.57354850E-4f,  7.62310196E-5f, -3.15813283E-4f, -2.68131878E-3f, -7.93138797E-4f, -1.81250245E-3f, -1.30747191E-3f, -2.53893943E-3f, -1.23571991E-3f, 2.53785018E-3f, -6.86032292E-4f,  1.14346532E-4f, -4.21084367E-4f, -3.57509162E-3f, -1.05751837E-3f, -2.41666987E-3f, -1.74329584E-3f, -3.38525249E-3f, -1.64762651E-3f,  3.38380016E-3f, -9.14709700E-4f, 1.52462039E-4f, -5.26355451E-4f, -4.46886446E-3f, -1.32189794E-3f, -3.02083730E-3f, -2.17911977E-3f, -4.23156555E-3f, -2.05953311E-3f, 4.22975013E-3f, -1.14338711E-3f, 1.90577546E-4f);
+                
+        assertArrayEquals(expDeltaWeights.getValues(), deltaWeights.getValues(), 1e-9f);
     }
+    
+    @Test
+    public void testBackwardTanhMseLoss() {
+        RandomGenerator.getDefault().initSeed(123); // init random generator with seed that will be used for weights (same effect as line above)
+        
+        // input vector for this layer
+        Tensor inputs = new Tensor(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
+        Tensor weights = new Tensor(5, 10); // weights from previous layer
+        WeightsInit.uniform(weights.getValues(), 5); // "[0.19961303, -0.23501621, 0.43907326, -0.17747784, -0.22066136, 0.06630343, 0.097314, -0.21566293, 0.273578, 0.10945064, 0.33577937, 0.044093937, 0.19323963, -0.3021235, -0.38288906, 0.16261822, 0.26498383, -0.207817, 0.070406556, -0.23022851, 0.36503863, 0.091478825, -0.31402034, -0.25345784, 0.42504954, -0.037393004, -0.38854277, -0.36758634, -0.38503492, -0.33786723, -0.36604232, -0.14479709, -0.06755906, 0.38639867, 0.3348655, 0.15910655, 0.06717491, -0.4455302, -0.09257606, -1.219213E-4, -0.21616945, 0.43006968, -0.31055218, 0.2699433, -0.214278, 0.25471163, -0.03427276, -0.43431506, -0.054469943, -0.23747501]"
+        Tensor outputErrors = new Tensor(10);
+        outputErrors.setValues(0.04212712f, 0.3698768f, 0.10604945f, 0.24532129f, 0.17567812f, 0.34893453f, 0.16589892f, -0.34877524f, 0.09166324f, -0.01524709f);
+                
+        FullyConnectedLayer prevLayer = new FullyConnectedLayer(5); // not used for anything just dummy to prevent npe in init      
+        prevLayer.setOutputs(inputs);
+        
+        OutputLayer instance = new OutputLayer(10, ActivationType.TANH);
+        instance.setLossType(LossType.MEAN_SQUARED_ERROR);
+        instance.setPrevLayer(prevLayer);               
+        instance.init();
+        instance.setWeights(weights);
+        instance.setBiases(new float[] {0.1f, 0.2f, 0.3f, 0.11f, 0.12f, 0.13f, 0.21f, 0.22f, 0.23f, 0.24f}); // set bias values
+        instance.forward(); // derivatives are calculated using outputs | outputs : "[0.51053023, 0.59142923, 0.5264875, 0.5610246, 0.5438069, 0.5863592, 0.5413798, 0.41367948, 0.52289975, 0.4961883]"          
+        instance.setOutputErrors(outputErrors.getValues());
 
+        instance.backward();
+                
+        Tensor result = instance.getDeltas(); //   [0.01052711, 0.08937729, 0.026437959, 0.060416743, 0.043582395, 0.08463131, 0.04119066, -0.084595, 0.022867741, -0.0038115513]
+        Tensor expResult = new Tensor(10); // [0.01052711  0.08937729  0.02643796   0.06041675   0.0435824    0.08463131  0.04119066  -0.084595  0.02286774   -0.00381155] from num py test
+        expResult.setValues( 0.04205245f, 0.32355571f, 0.10486565f, 0.23113f, 0.17036584f, 0.30967469f, 0.16141546f, -0.30956639f, 0.09089737f, -0.01524355f);
+        
+        assertArrayEquals(expResult.getValues(), result.getValues(), 1e-7f);        
+        
+        Tensor deltaWeights = instance.getDeltaWeight();
+        Tensor expDeltaWeights = new Tensor(-0.000420524474547f,  -0.00323555711428f,  -0.0010486565191f,  -0.00231130007696f,  -0.0017036583964f,  -0.0030967469684f,  -0.00161415465798f,  0.00309566398745f,  -0.000908973680493f,  0.000152435460158f,  -0.000841048949094f,  -0.00647111422856f,  -0.0020973130382f,  -0.00462260015392f,  -0.00340731679281f,  -0.00619349393679f,  -0.00322830931597f,  0.0061913279749f,  -0.00181794736099f,  0.000304870920315f,  -0.00126157345497f,  -0.00970667158391f,  -0.00314596963543f,  -0.00693390040308f,  -0.00511097531615f,  -0.00929024113591f,  -0.00484246409421f,  0.00928699219299f,  -0.0027269211092f,  0.000457306391831f,  -0.00168209789819f,  -0.0129422284571f,  -0.0041946260764f,  -0.00924520030784f,  -0.00681463358562f,  -0.0123869878736f,  -0.00645661863193f,  0.0123826559498f,  -0.00363589472197f,  0.000609741840631f,  -0.0021026223414f,  -0.0161777853303f,  -0.00524328251736f,  -0.0115565002126f,  -0.00851829185509f,  -0.0154837346113f,  -0.00807077316965f,  0.0154783197066f,  -0.00454486833474f,  0.000762177289431f);
+                
+        assertArrayEquals(expDeltaWeights.getValues(), deltaWeights.getValues(), 1e-9f);
+    }    
+
+    @Test
+    public void testBackwardLinearMseLoss() {
+        RandomGenerator.getDefault().initSeed(123); // init random generator with seed that will be used for weights (same effect as line above)
+        
+        // input vector for this layer
+        Tensor inputs = new Tensor(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
+        Tensor weights = new Tensor(5, 10); // weights from previous layer
+        WeightsInit.uniform(weights.getValues(), 5); // "[0.19961303, -0.23501621, 0.43907326, -0.17747784, -0.22066136, 0.06630343, 0.097314, -0.21566293, 0.273578, 0.10945064, 0.33577937, 0.044093937, 0.19323963, -0.3021235, -0.38288906, 0.16261822, 0.26498383, -0.207817, 0.070406556, -0.23022851, 0.36503863, 0.091478825, -0.31402034, -0.25345784, 0.42504954, -0.037393004, -0.38854277, -0.36758634, -0.38503492, -0.33786723, -0.36604232, -0.14479709, -0.06755906, 0.38639867, 0.3348655, 0.15910655, 0.06717491, -0.4455302, -0.09257606, -1.219213E-4, -0.21616945, 0.43006968, -0.31055218, 0.2699433, -0.214278, 0.25471163, -0.03427276, -0.43431506, -0.054469943, -0.23747501]"
+        Tensor outputErrors = new Tensor(10);
+        outputErrors.setValues(0.04212712f, 0.3698768f, 0.10604945f, 0.24532129f, 0.17567812f, 0.34893453f, 0.16589892f, -0.34877524f, 0.09166324f, -0.01524709f);
+                
+        FullyConnectedLayer prevLayer = new FullyConnectedLayer(5); // not used for anything just dummy to prevent npe in init      
+        prevLayer.setOutputs(inputs);
+        
+        OutputLayer instance = new OutputLayer(10);
+        instance.setActivationType(ActivationType.LINEAR);
+        instance.setLossType(LossType.MEAN_SQUARED_ERROR);
+        instance.setPrevLayer(prevLayer);               
+        instance.init();
+        instance.setWeights(weights);
+        instance.setBiases(new float[] {0.1f, 0.2f, 0.3f, 0.11f, 0.12f, 0.13f, 0.21f, 0.22f, 0.23f, 0.24f}); // set bias values
+        instance.forward(); // derivatives are calculated using outputs | outputs : "[0.51053023, 0.59142923, 0.5264875, 0.5610246, 0.5438069, 0.5863592, 0.5413798, 0.41367948, 0.52289975, 0.4961883]"          
+        instance.setOutputErrors(outputErrors.getValues());
+
+        instance.backward();
+                
+        Tensor result = instance.getDeltas(); //   [0.01052711, 0.08937729, 0.026437959, 0.060416743, 0.043582395, 0.08463131, 0.04119066, -0.084595, 0.022867741, -0.0038115513]
+        Tensor expResult = new Tensor(10); // [0.01052711  0.08937729  0.02643796   0.06041675   0.0435824    0.08463131  0.04119066  -0.084595  0.02286774   -0.00381155] from num py test
+        expResult.setValues( 0.04212712f,  0.3698768f, 0.10604945f, 0.24532129f, 0.17567812f, 0.34893453f, 0.16589892f, -0.34877524f, 0.09166324f, -0.01524709f);
+
+        assertArrayEquals(expResult.getValues(), result.getValues(), 1e-8f);        
+        
+        Tensor deltaWeights = instance.getDeltaWeight();
+        Tensor expDeltaWeights = new Tensor(-0.000421271f,  -0.00369877f,  -0.00106049f,  -0.00245321f,  -0.00175678f,  -0.00348935f,  -0.00165899f,  0.00348775f,  -0.000916632f,  0.000152471f,  -0.000842543f,  -0.00739754f,  -0.00212099f,  -0.00490643f,  -0.00351356f,  -0.00697869f,  -0.00331798f,  0.00697551f,  -0.00183326f,  0.000304942f,  -0.00126381f,  -0.0110963f,  -0.00318148f,  -0.00735964f,  -0.00527034f,  -0.010468f,  -0.00497697f,  0.0104633f,  -0.0027499f,  0.000457413f,  -0.00168509f,  -0.0147951f,  -0.00424198f,  -0.00981285f,  -0.00702712f,  -0.0139574f,  -0.00663596f,  0.013951f,  -0.00366653f,  0.000609884f,  -0.00210636f,  -0.0184938f,  -0.00530247f,  -0.0122661f,  -0.00878391f,  -0.0174467f,  -0.00829495f,  0.0174388f,  -0.00458316f,  0.000762355f);
+                
+        assertArrayEquals(expDeltaWeights.getValues(), deltaWeights.getValues(), 1e-7f);
+    }    
+    
+    
     @Test
     public void testApplyWeightChanges() {
         OutputLayer instance = new OutputLayer(10);

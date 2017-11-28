@@ -202,6 +202,10 @@ public abstract class AbstractLayer implements Serializable {
     public void setWeights(Tensor weights) {
         this.weights = weights;
     }
+    
+    public void setWeights(String weightStr) {
+        weights.setValuesFromString(weightStr);
+    }    
 
     public final void setDeltas(Tensor deltas) {
         this.deltas = deltas;

@@ -66,11 +66,12 @@ public class MaxPoolingLayerTest {
                                 new float[] {0.45139998f, 0.5405f, 0.4957f,
                                              0.45f, 0.99470013f, 0.77730006f,
                                              0.4385f, 0.29759997f, 0.23410001f});
-
-                /* maxIdxs  1,1     2,1     4,1
-                            1,3     3,3     4,3
-                            1,4     2,4     5,4     */
-        boolean areEqual = actualOutputs.equals(expectedOutputs, 1e-7f); //delta je dozvoljena greska 1e-15
+                                             
+                /* maxIdxs  1,1     1,2     1,4
+                            3,1     3,3     3,4
+                            4,1     4,2     4,5  */
+                
+        boolean areEqual = actualOutputs.equals(expectedOutputs, 1e-7f);
                 
         assertTrue(areEqual); 
     }

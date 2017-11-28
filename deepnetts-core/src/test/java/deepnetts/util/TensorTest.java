@@ -258,7 +258,7 @@ public class TensorTest {
     public void testToString() {
         float[] values = new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
         Tensor instance = new Tensor(values);
-        String expResult = "[0.1, 0.2, 0.3, 0.4, 0.5]";
+        String expResult = "0.1, 0.2, 0.3, 0.4, 0.5";
         String result = instance.toString();
         assertEquals(expResult, result);
     }

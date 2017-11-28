@@ -53,6 +53,13 @@ public class MaxPoolingLayer extends AbstractLayer {
     int maxIdx[][][][]; 
        
 
+    /**
+     * Creates a new max pooling layer with specified filter dimensions and stride.
+     * 
+     * @param filterWidth width of the filter square
+     * @param filterHeight height of the filter square
+     * @param stride filter step
+     */
     public MaxPoolingLayer(int filterWidth, int filterHeight, int stride) {
         this.filterWidth = filterWidth;
         this.filterHeight = filterHeight;
@@ -92,6 +99,7 @@ public class MaxPoolingLayer extends AbstractLayer {
             for (int inRow = 0; inRow < inputs.getRows() - filterHeight + 1; inRow += stride) {
                 outCol = 0; // reset col on every new row ???????
                 for (int inCol = 0; inCol < inputs.getCols() - filterWidth + 1; inCol += stride) {
+                    
                     // apply max pool filter 
                     max = inputs.get(inRow, inCol, ch);
                     maxC = inCol;
@@ -99,21 +107,21 @@ public class MaxPoolingLayer extends AbstractLayer {
                     for (int fr = 0; fr < filterHeight; fr++) {
                         for (int fc = 0; fc < filterWidth; fc++) {
                             if (max < inputs.get(inRow + fr, inCol + fc, ch)) {
+                                maxR = inRow + fr;                                
                                 maxC = inCol + fc;
-                                maxR = inRow + fr;
                                 max = inputs.get(maxR, maxC, ch);     
                             }
                         }
                     }
                     
                     // zapamti indexe neurona iz prethodnog lejera koji su propustili max (koristice se u bacward pass-u)
-                    maxIdx[ch][outRow][outCol][0] = maxC; // width idx (col)
-                    maxIdx[ch][outRow][outCol][1] = maxR; // height idx (row)                            
+                    maxIdx[ch][outRow][outCol][0] = maxR; // height idx (row)                            
+                    maxIdx[ch][outRow][outCol][1] = maxC; // width idx (col)
 
-                    outputs.set(outRow, outCol, ch, max); // set max value as output - ovepozicije popraviti
-                    outCol++;
+                    outputs.set(outRow, outCol, ch, max); // set max value as output
+                    outCol++;   // increase output col by one for each input (stride) step
                 } // scan col
-                outRow++;
+                outRow++; // increase output row by one for each input (stride) step
             } // scan row
         } // channel/depth
     }
@@ -138,12 +146,14 @@ public class MaxPoolingLayer extends AbstractLayer {
         
         if (nextLayer instanceof FullyConnectedLayer) {
             deltas.fill(0);
-            // ovo mozda moze i samo sa dve petjle jer je svaki sa svima u narednom layeru 
+
             for (int ch = 0; ch < deltas.getDepth(); ch++) {  // iteriraj sve kanale/feature mape u ovom lejeru      
                 for (int row = 0; row < deltas.getRows(); row++) {
                     for (int col = 0; col < deltas.getCols(); col++) {
                         for (int ndC = 0; ndC < nextLayer.deltas.getCols(); ndC++) { // sledeci lejer delte po sirini/kolone posto je fully connected
-                            deltas.add(row, col, ch,  nextLayer.deltas.get(ndC) * nextLayer.weights.get(col, row, ch, ndC) ); // col, row, dz, ndC
+                            final float nextDelta = nextLayer.deltas.get(ndC);
+                            final float weight = nextLayer.weights.get(col, row, ch, ndC);
+                            deltas.add(row, col, ch,  nextDelta * weight);
                         }
                     }
                 } // end back propagate deltas

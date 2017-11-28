@@ -30,7 +30,6 @@ import java.util.Arrays;
 /**
  * This class represents output layer with sigmoid output function by default.
  * 
- * 
  * @author zoran
  */
 public class OutputLayer extends AbstractLayer {
@@ -57,6 +56,20 @@ public class OutputLayer extends AbstractLayer {
         
         setActivationType(ActivationType.SIGMOID);
     }
+    
+    public OutputLayer(int width, ActivationType activationFunction) {
+        this.width = width;
+        this.height = 1;
+        this.depth = 1;        
+
+        labels = new String[depth];
+        // generate enumerated class names from 1..n
+        for (int i = 0; i < depth; i++) {
+            labels[i] = "Out_" + i;
+        }
+        
+        setActivationType(activationFunction);
+    }    
 
     public OutputLayer(String[] labels) {
         this.width = labels.length;
@@ -65,6 +78,11 @@ public class OutputLayer extends AbstractLayer {
         this.labels = labels;
         setActivationType(ActivationType.SIGMOID);
     }
+    
+    public OutputLayer(String[] labels, ActivationType activationFunction) {
+        this(labels);
+        setActivationType(activationFunction);
+    }    
     
     public final void setOutputErrors(final float[] outputErrors) {
         this.outputErrors = outputErrors;
@@ -102,17 +120,19 @@ public class OutputLayer extends AbstractLayer {
     }
 
     /**
-     * This method implements forward pass for the sigmoid  output layer. 
+     * This method implements forward pass for the output layer. 
+     *
      * Calculates weighted input and layer outputs using sigmoid function.
      */
     @Override
-    public void forward() {        
-        for (int outCol = 0; outCol < outputs.getCols(); outCol++) {  // for all neurons in this layer  | ForkJoin split this in two until you reach size which makes sense: number of calculations = inputCols * outputCols   
-            outputs.set(outCol,  biases[outCol]);                     // reset output to bias value
+    public void forward() {                
+        outputs.copyFrom(biases);  // reset output to bias value        
+        for (int outCol = 0; outCol < outputs.getCols(); outCol++) {  // for all neurons in this layer  | ForkJoin split this in two until you reach size which makes sense: number of calculations = inputCols * outputCols           
             for (int inCol = 0; inCol < inputs.getCols(); inCol++) {
                 outputs.add(outCol, inputs.get(inCol) * weights.get(inCol, outCol));    // add weighted sum
             }                        
-            outputs.set(outCol, ActivationFunctions.sigmoid(outputs.get(outCol)));      // calculate output
+            //outputs.set(outCol, ActivationFunctions.sigmoid(outputs.get(outCol)));      // apply activation function - could be tanh too
+            outputs.set(outCol, ActivationFunctions.calc(activationType, outputs.get(outCol)));
         }             
     }
 
@@ -133,21 +153,20 @@ public class OutputLayer extends AbstractLayer {
             // ako je funkcija greske binary CE onda ne treba, a ako je MSE ond treba
             // kako ovde da znam da koja je funkcija greske - prilikom kreiranja mreze (build) da se setuje neki parametar
             if (lossType == LossType.MEAN_SQUARED_ERROR) {
-                deltas.set(dCol, outputErrors[dCol] * ActivationFunctions.sigmoidPrime(outputs.get(dCol))); // delta = e*f1 
+                deltas.set(dCol, outputErrors[dCol] * ActivationFunctions.prime(activationType, outputs.get(dCol))); // delta = e*f1 
             } else {
                 deltas.set(dCol, outputErrors[dCol]); // zato jer se u matematickom obliku skracuju - daj referencu!
             }
-                
-        
+                        
             for (int inCol = 0; inCol < inputs.getCols(); inCol++) { // prev layer is allways FullyConnected
                 final float grad = deltas.get(dCol) * inputs.get(inCol);
-                //final float deltaWeight = Optimizers.sgd(learningRate, grad);
-                final float deltaWeight = Optimizers.momentum(learningRate, grad, momentum, prevDeltaWeights.get(inCol, dCol));                
+                final float deltaWeight = Optimizers.sgd(learningRate, grad);
+                //final float deltaWeight = Optimizers.momentum(learningRate, grad, momentum, prevDeltaWeights.get(inCol, dCol));                
                 deltaWeights.add(inCol, dCol, deltaWeight ); // sum deltaWeight for batch mode
             }
             //deltaBiases[dCol] += -learningRate * deltas.get(dCol) + momentum * prevDeltaBiases[dCol];
-            //deltaBiases[dCol] += Optimizers.sgd(learningRate, deltas.get(dCol));
-            deltaBiases[dCol] += Optimizers.momentum(learningRate, deltas.get(dCol), momentum, prevDeltaBiases[dCol]);
+              deltaBiases[dCol] += Optimizers.sgd(learningRate, deltas.get(dCol));
+//            deltaBiases[dCol] += Optimizers.momentum(learningRate, deltas.get(dCol), momentum, prevDeltaBiases[dCol]);
         }
     }
 

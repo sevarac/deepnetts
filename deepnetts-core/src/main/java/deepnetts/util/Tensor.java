@@ -360,17 +360,17 @@ public class Tensor implements Serializable {
         StringBuilder sb = new StringBuilder();
 
         // toString logging
-        if (ConvNetLogger.getInstance().logParams()) {
-            sb.append("{Tensor, cols:"+cols+", rows:"+rows+", depth:"+depth+", fourthDim:"+fourthDim+", dimensions:"+dimensions);
-            sb.append(",values:");
-        }
+//        if (ConvNetLogger.getInstance().logParams()) {
+//            sb.append("{Tensor, cols:"+cols+", rows:"+rows+", depth:"+depth+", fourthDim:"+fourthDim+", dimensions:"+dimensions);
+//            sb.append(",values:");
+//        }
         
-        sb.append("[");
+        sb.append("");
         for (int i = 0; i < values.length; i++) {
             sb.append(values[i]);
             if (i<values.length-1) sb.append(", ");
         }
-        sb.append("]");
+        sb.append("");
 
         // maybe use Arrays.toString(values)
 
@@ -529,8 +529,7 @@ public class Tensor implements Serializable {
         }
         return true;
     }    
-    
-        
+            
     // add clone using apache clone builder
     
     public static Tensor zeros(int cols) {
@@ -538,7 +537,27 @@ public class Tensor implements Serializable {
     }
     
     public static Tensor ones(int cols) {
-        return new Tensor(cols, 1f);
+        return new Tensor(cols, 1.0f);
     }    
+    
+    public static String valuesAsString(Tensor[] tensors) {
+        StringBuilder sb = new StringBuilder();
+        
+        for(Tensor t : tensors)
+            sb.append(t.toString());
+        
+        return sb.toString();
+    }
+    /**
+     * Sets tensor values from csv string.
+     * 
+     * @param values csv string with values
+     */
+    public void setValuesFromString(String values) {
+        String[] strArr = values.split(",");
+        for(int i=0; i<strArr.length; i++) {
+            this.values[i] = Float.parseFloat(strArr[i]);
+        }
+    }
             
 }

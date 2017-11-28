@@ -41,9 +41,9 @@ public class Regression {
         DataSet dataSet = null;// get dataset from somewhere
         
         NeuralNetwork neuralNet = MultiLayerPerceptron.builder()
-                                    .inputLayer(5)
-                                    .fullyConnectedLayer(10, ActivationType.TANH)
-                                    .outputLayer(1, ActivationType.LINEAR)
+                                    .addInputLayer(5)
+                                    .addFullyConnectedLayer(10, ActivationType.TANH)
+                                    .addOutputLayer(1, ActivationType.LINEAR)
                                     .lossFunction(LossType.MEAN_SQUARED_ERROR)          
                                     .build();
                        

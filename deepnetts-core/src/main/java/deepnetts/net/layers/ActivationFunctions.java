@@ -90,7 +90,8 @@ public final class ActivationFunctions {
      *       
      *  y = 1 / (1+e^(-x))
      * 
-     * TODO: slope, amplitude, translate? (all adjustable?)
+     * TODO: slope, amplitude, translate? (all these params could be trainable...)
+     *       maybe add annotations so Type enums can be generated automatically
      * 
      * @param x
      * @return value of sigmoid function calculated for input x
@@ -112,10 +113,9 @@ public final class ActivationFunctions {
     public static final float sigmoidPrime(final float y) {
        return y*(1-y);
     } 
-        
-    
+            
     /**
-     * Tanh function (sigmoid nn interval (-1, 1))
+     * Tanh function (sigmoid on interval (-1, 1)).
      * 
      *  y = ((e^2x)-1 ) / ((e^2x)+1)
      * 
@@ -127,10 +127,16 @@ public final class ActivationFunctions {
     public static final float tanh(final float x) {
        // x = x*2/3;
        // float a=1.7159;
-       float e2x = (float)Math.exp(2*x);   
+       final float e2x = (float)Math.exp(2*x);   
        return (e2x-1) / (e2x+1); // calculate tanh 
     } 
     
+    /**
+     * First derivative of tanh function.
+     * 
+     * @param y
+     * @return 
+     */
     public static final float tanhPrime(final float y) {     
         return (1-y*y);
     }
@@ -143,10 +149,26 @@ public final class ActivationFunctions {
        return ( y > 0 ? 1 : 0);
     }         
     
+    /**
+     * Linear activation function.
+     * y = x
+     * 
+     * TODO: y = kx + n (with k and n trainable)
+     * 
+     * @param x
+     * @return 
+     */
     public static final float linear(final float x) {
        return x;  
     }     
     
+    /**
+     * First derivative of linear function.
+     * For y = x, derivative is allways 1
+     * 
+     * @param y
+     * @return 
+     */
     public static final float linearPrime(final float y) {
        return 1;
     }     

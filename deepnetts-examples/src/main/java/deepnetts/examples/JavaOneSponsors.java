@@ -34,8 +34,9 @@ import deepnetts.net.loss.LossType;
 import deepnetts.util.FileIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class JavaOneSponsors {
             
@@ -46,14 +47,14 @@ public class JavaOneSponsors {
     String trainingFile = "datasets/JavaOneSponsors/train.txt";
    // String testFile = "datasets/JavaOneSponsors/test/test.txt";         
     
-    static final Logger LOG = Logger.getLogger(DeepNetts.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());    
     
     
     public void run() throws DeepNettsException, IOException {
 
         ImageSet imageSet = new ImageSet(imageWidth, imageHeight);
         
-        LOG.info("Loading images...");
+        LOGGER.info("Loading images...");
         
         imageSet.loadLabels(new File(labelsFile));
         imageSet.loadImages(new File(trainingFile), false);
@@ -63,26 +64,22 @@ public class JavaOneSponsors {
         imageSet.shuffle();        
         
         int labelsCount = imageSet.getLabelsCount();
-        
-        LOG.info("Done!");             
-        LOG.info("Creating neural network...");
+                 
+        LOGGER.info("Creating neural network...");
 
         // dodaj i bele slike kao negative u data set
         ConvolutionalNetwork javaOneNet = ConvolutionalNetwork.builder()
-                                        .inputLayer(imageWidth, imageHeight) 
+                                        .addInputLayer(imageWidth, imageHeight) 
                                         .convolutionalLayer(5, 5, 3, ActivationType.TANH)
                                         .maxPoolingLayer(2, 2, 2)                 
                                         .fullyConnectedLayer(30, ActivationType.TANH)
-                                        .outputLayer(labelsCount, ActivationType.SOFTMAX)
+                                        .addOutputLayer(labelsCount, ActivationType.SOFTMAX)
                                         .lossFunction(LossType.CROSS_ENTROPY)
                                         .randomSeed(123)
                                         .build();
                      
-        LOG.info("Done!");       
-        LOG.info("Training neural network"); 
+        LOGGER.info("Training neural network"); 
         
-           
-        LOG.setLevel(Level.FINEST);
         // create a set of convolutional networks and do training, crossvalidation and performance evaluation
         BackpropagationTrainer trainer = new BackpropagationTrainer(javaOneNet);
         trainer.setLearningRate(0.01f)
@@ -96,7 +93,7 @@ public class JavaOneSponsors {
         try {
             FileIO.writeToFile(javaOneNet, "javaonesponsors.dnet");
         } catch (IOException ex) {
-            Logger.getLogger(JavaOneSponsors.class.getName()).log(Level.SEVERE, null, ex);
+           LOGGER.error(ex);
         }
         
         // deserialize and evaluate neural network
@@ -120,7 +117,7 @@ public class JavaOneSponsors {
         try {
             (new JavaOneSponsors()).run();
         } catch (DeepNettsException | IOException ex) {
-            Logger.getLogger(JavaOneSponsors.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
    
                 

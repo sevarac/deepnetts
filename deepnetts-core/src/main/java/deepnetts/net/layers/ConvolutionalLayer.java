@@ -184,8 +184,8 @@ public class ConvolutionalLayer extends AbstractLayer {
     @Override
     public void forward() {
         
-        // paralelieze this external loop
-        for (int outZ = 0; outZ < this.depth; outZ++) {  // iterate all channels  in this layer - good point for paraleliation with fork join - each channel can be calculated independently
+        // paralelieze this external loop - channels
+        for (int outZ = 0; outZ < this.depth; outZ++) {
             int outR = 0, outC = 0; // reset indexes for current output's row and col
  
             for (int inR = 0; inR < inputs.getRows(); inR += stride) { // iterate all input rows
@@ -198,7 +198,6 @@ public class ConvolutionalLayer extends AbstractLayer {
                     for (int fz = 0; fz < filterDepth; fz++) { // iterate filter by depth - all input channels (in previous layer) 
                         for (int fr = 0; fr < filterHeight; fr++) { // iterate filter by height/rows
                             for (int fc = 0; fc < filterWidth; fc++) { // iterate filter by width / columns                        
-                                // padding
                                 final int cr = inR + (fr - fCenterY); // convolved row idx 
                                 final int cc = inC + (fc - fCenterX); // convolved col idx
 
@@ -283,6 +282,8 @@ public class ConvolutionalLayer extends AbstractLayer {
 
     private void backwardFromMaxPooling() {
         final MaxPoolingLayer nextPoolLayer = (MaxPoolingLayer) nextLayer;
+        final int[][][][] maxIdx = nextPoolLayer.maxIdx; // uzmi index neurona koji je poslao max output na tekucu poziciju filtera
+
         deltas.fill(0); // reset all deltas
 
         for (int ch = 0; ch < this.depth; ch++) {  // iteriraj sve kanale u ovom lejeru (to su automatski i kanali u sledem max pooling lejeru)
@@ -291,10 +292,9 @@ public class ConvolutionalLayer extends AbstractLayer {
                 for (int dc = 0; dc < nextLayer.deltas.getCols(); dc++) { // sledeci lejer delte po sirini
 
                     final float nextLayerDelta = nextLayer.deltas.get(dr, dc, ch); // uzmi deltu iz sledeceg sloja za tekuci neuron sledeceg sloja
-                    final int[][][][] maxIdx = nextPoolLayer.maxIdx; // uzmi index neurona koji je poslao max output na tekucu poziciju filtera
-                    final int maxC = maxIdx[ch][dr][dc][0];
-                    final int maxR = maxIdx[ch][dr][dc][1];
-
+                    final int maxR = maxIdx[ch][dr][dc][0];                    
+                    final int maxC = maxIdx[ch][dr][dc][1];
+                    
                     final float derivative = ActivationFunctions.prime(activationType, outputs.get(maxR, maxC, ch));
                     deltas.set(maxR, maxC, ch, nextLayerDelta * derivative);
                 }
@@ -447,6 +447,28 @@ public class ConvolutionalLayer extends AbstractLayer {
         return filters;
     }
 
+    public void setFilters(Tensor[] filters) {
+        this.filters = filters;
+    }
+    
+    public void setFilters(String filtersStr) {
+
+        String[] strVals = filtersStr.split(";"); // ; is hardcoded filter separator see FileIO // also can be splited at "
+        int filterSize = filterWidth * filterHeight * filterDepth;
+
+        for (int i = 0; i < filters.length; i++) {
+            float[] filterValues = new float[filterSize];
+            String[] vals = strVals[i].split(",");            
+            for (int k = 0; k < filterSize; k++) {
+                filterValues[k] = Float.parseFloat(vals[k]);
+            }
+
+            filters[i].setValues(filterValues); // ovde je tensor 5x5x3 a imamomo samo 25 vrednosti
+        }
+    }
+        
+   
+
     public int getFilterWidth() {
         return filterWidth;
     }
@@ -466,5 +488,5 @@ public class ConvolutionalLayer extends AbstractLayer {
     public Tensor[] getFilterDeltaWeights() {
         return deltaWeights;
     }
-    
+      
 }

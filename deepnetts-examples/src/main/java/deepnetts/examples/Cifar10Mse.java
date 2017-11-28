@@ -21,18 +21,18 @@
     
 package deepnetts.examples;
 
+import deepnetts.core.DeepNetts;
 import deepnetts.data.ImageSet;
 import deepnetts.net.ConvolutionalNetwork;
 import deepnetts.net.layers.ActivationType;
-import deepnetts.net.layers.OutputLayer;
 import deepnetts.net.loss.LossType;
-import deepnetts.net.loss.MeanSquaredErrorLoss;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.OptimizerType;
 import deepnetts.util.DeepNettsException;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Cifar10Mse {
             
@@ -43,11 +43,11 @@ public class Cifar10Mse {
     String trainingFile = "datasets/cifar10/train.txt";
     //String testFile = "datasets/cifar10/test.txt";         
     
-    static final Logger LOG = Logger.getLogger(Cifar10Mse.class.toString());
+    static final Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());   
     
     
     public void run() throws DeepNettsException, IOException {
-        LOG.info("Loading images...");
+        LOGGER.info("Loading images...");
         ImageSet imageSet = new ImageSet(imageWidth, imageHeight);        
         imageSet.loadLabels(new File(labelsFile));
         imageSet.loadImages(new File(trainingFile), true, 100);
@@ -56,22 +56,20 @@ public class Cifar10Mse {
         imageSet.shuffle();
             
         int labelsCount = imageSet.getLabelsCount();
-        
-        LOG.info("Done!");             
-        LOG.info("Creating neural network...");
+               
+        LOGGER.info("Creating neural network...");
 
         ConvolutionalNetwork cifar10Net = new ConvolutionalNetwork.Builder()
-                                        .inputLayer(imageWidth, imageHeight) 
+                                        .addInputLayer(imageWidth, imageHeight) 
                                         .convolutionalLayer(5, 1, ActivationType.TANH)
-                                        .maxPoolingLayer(2, 2)  
+                                        .addMaxPoolingLayer(2, 2)  
                                         .fullyConnectedLayer(20, ActivationType.TANH)          
-                                        .outputLayer(labelsCount, ActivationType.TANH)
+                                        .addOutputLayer(labelsCount, ActivationType.TANH)
                                         .lossFunction(LossType.MEAN_SQUARED_ERROR)
                                         .randomSeed(123)
                                         .build();
-        
-        LOG.info("Done!");       
-        LOG.info("Training neural network"); 
+          
+        LOGGER.info("Training neural network"); 
          
         BackpropagationTrainer trainer = new BackpropagationTrainer(cifar10Net);
         trainer.setMaxError(0.03f);

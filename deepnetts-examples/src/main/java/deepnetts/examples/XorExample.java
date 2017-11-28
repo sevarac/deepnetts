@@ -43,9 +43,9 @@ public class XorExample {
         DataSet dataSet = xorDataSet();
         
         MultiLayerPerceptron convNet = MultiLayerPerceptron.builder()
-                .inputLayer(2)
-                .fullyConnectedLayer(3, ActivationType.TANH)
-                .outputLayer(1, OutputLayer.class)
+                .addInputLayer(2)
+                .addFullyConnectedLayer(3, ActivationType.TANH)
+                .addOutputLayer(1, OutputLayer.class)
                 .lossFunction(LossType.MEAN_SQUARED_ERROR)
                 .randomSeed(123)
                 .build();

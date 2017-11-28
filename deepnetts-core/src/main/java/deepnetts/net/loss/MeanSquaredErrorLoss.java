@@ -29,27 +29,38 @@ import java.io.Serializable;
  * 
  * Should i provide total error from here?
  * 
- * @author Zoran Sevarac <zoran.sevarac@smart4net.co>
+ * TODO: count patterns and return mean from here. makes more sense
+ * 
+ * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
 public final class MeanSquaredErrorLoss implements LossFunction, Serializable {
 
     private final float[] outputError;
     private float totalPatternError;
     private float totalError;
+    //private int patternCount=0;
+        
 
     public MeanSquaredErrorLoss(NeuralNetwork convNet) {
         outputError = new float[convNet.getOutputLayer().getWidth()];
     }
 
+    /**
+     * Returns output error vector and adds it to total error.
+     * 
+     * @param actualOutput
+     * @param targetOutput
+     * @return 
+     */
     @Override
     public float[] calculateOutputError(final float[] actualOutput, final float[] targetOutput) {
         totalPatternError = 0;
         for (int i = 0; i < actualOutput.length; i++) {
             outputError[i] = actualOutput[i] - targetOutput[i];
-            totalPatternError += 0.5 * outputError[i] * outputError[i];
+            totalPatternError += outputError[i] * outputError[i];
         }
 
-        totalError += totalPatternError;
+        totalError += 0.5 * totalPatternError;
         
         return outputError;
     }
@@ -65,6 +76,7 @@ public final class MeanSquaredErrorLoss implements LossFunction, Serializable {
     
     public void resetTotalError() {
         totalError = 0;
+        // patternCount=0;
     }
     
 

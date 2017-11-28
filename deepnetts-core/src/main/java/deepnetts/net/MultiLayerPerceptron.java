@@ -65,12 +65,12 @@ public class MultiLayerPerceptron extends NeuralNetwork {
        
         
         /**
-         * Adds input layer with specified width to the network.
+         * Adds input addLayer with specified width to the network.
          * 
-         * @param width layer width
+         * @param width addLayer width
          * @return builder instance
          */
-        public Builder inputLayer(int width) {
+        public Builder addInputLayer(int width) {
             InputLayer inLayer = new InputLayer(width, 1, 1);
             network.setInputLayer(inLayer);
             network.addLayer(inLayer);
@@ -80,43 +80,43 @@ public class MultiLayerPerceptron extends NeuralNetwork {
         
              
         /**
-         * Adss fully connected layer with specified width and Sigmoid function to the network.
+         * Adss fully connected addLayer with specified width and Sigmoid function to the network.
          * 
-         * @param width layer width / number of neurons
+         * @param width addLayer width / number of neurons
          * @return builder instance
          */
-        public Builder fullyConnectedLayer(int width) {
+        public Builder addFullyConnectedLayer(int width) {
             FullyConnectedLayer layer = new FullyConnectedLayer(width);
             network.addLayer(layer);
             return this;
         }
                 
        /**
-         * Adds fully connected layer with specified width and activation function to the network.
+         * Adds fully connected addLayer with specified width and activation function to the network.
          * 
-         * @param width layer width / number of neurons
-         * @param activationFunction activation function to use for this layer         * 
+         * @param width addLayer width / number of neurons
+         * @param activationFunction activation function to use for this addLayer         * 
          * @return builder instance
          * @see ActivationFunctions
          */        
-        public Builder fullyConnectedLayer(int width, ActivationType activationFunction) {
+        public Builder addFullyConnectedLayer(int width, ActivationType activationFunction) {
             FullyConnectedLayer layer = new FullyConnectedLayer(width, activationFunction);
             network.addLayer(layer);
             return this;
         }       
         
-        public Builder layer(AbstractLayer layer) {
+        public Builder addLayer(AbstractLayer layer) {
             network.addLayer(layer);
             return this;
         }                
             
         /**
-         * Adds SoftMaxOutput Layer as output layer to the network
+         * Adds SoftMaxOutput Layer as output addLayer to the network
          * 
-         * @param width  layer width / number of neurons
+         * @param width  addLayer width / number of neurons
          * @return builder instance
          */
-        public Builder outputLayer(int width) {
+        public Builder addOutputLayer(int width) {
             SoftmaxOutputLayer outputLayer = new SoftmaxOutputLayer(width);
             network.setOutputLayer(outputLayer);
             network.addLayer(outputLayer);
@@ -125,14 +125,14 @@ public class MultiLayerPerceptron extends NeuralNetwork {
         }
         
         /**
-         * Adds output layer of specified class to the network
-         * Output layer class can be SoftmaxOutputLayer or SigmoidOutputLayer
+         * Adds output addLayer of specified class to the network
+ Output addLayer class can be SoftmaxOutputLayer or SigmoidOutputLayer
          * 
-         * @param width  layer width / number of neurons
-         * @param clazz output layer class 
+         * @param width  addLayer width / number of neurons
+         * @param clazz output addLayer class 
          * @return builder instance
          */        
-        public Builder outputLayer(int width, Class<? extends OutputLayer> clazz) {
+        public Builder addOutputLayer(int width, Class<? extends OutputLayer> clazz) {
             try {
                 OutputLayer outputLayer = clazz.getDeclaredConstructor( Integer.TYPE).newInstance(width);
                 network.setOutputLayer(outputLayer);
@@ -144,7 +144,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
             return this;
         }     
 
-        public Builder outputLayer(int width, ActivationType activationType) {
+        public Builder addOutputLayer(int width, ActivationType activationType) {
             OutputLayer outputLayer = null;
             if (activationType.equals(ActivationType.SOFTMAX)) {
                 outputLayer = new SoftmaxOutputLayer(width);
@@ -218,7 +218,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
                 AbstractLayer layer = network.getLayers().get(i);
                 layer.setPrevLayer(prevLayer);
                 if (prevLayer!= null) prevLayer.setNextlayer(layer);               
-                prevLayer = layer;                 // current layer becomes prev layer for layerin next iteration                            
+                prevLayer = layer;                 // current addLayer becomes prev addLayer for layerin next iteration                            
             }
                        
             for(AbstractLayer layer : network.getLayers()) {

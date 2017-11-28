@@ -35,8 +35,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Represents data set with images
@@ -52,7 +52,7 @@ public class ImageSet extends DataSet<ExampleImage> {
     private final int imageHeight;
     private Tensor mean;
     
-    private final static Logger LOGGER = Logger.getLogger(DeepNetts.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());    
         
    // osmisliti i neki protocni / buffered data set, koji ucitava jedan batch
       
@@ -136,10 +136,10 @@ public class ImageSet extends DataSet<ExampleImage> {
             LOGGER.info("Loaded "+images.size()+ " images");
             
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
             throw new DeepNettsException("Could not find image file: " + imgFileName, ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
             throw new DeepNettsException("Error loading image file: " + imgFileName, ex);
         }
  
@@ -192,10 +192,10 @@ public class ImageSet extends DataSet<ExampleImage> {
             LOGGER.info("Loaded " + images.size() + " images");
 
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
             throw new DeepNettsException("Could not find image file: " + imgFileName, ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
             throw new DeepNettsException("Error loading image file: " + imgFileName, ex);
         }
     }    
@@ -287,10 +287,10 @@ public class ImageSet extends DataSet<ExampleImage> {
             br.close();
             return labels;
         } catch (FileNotFoundException ex) {            
-              LOGGER.log(Level.SEVERE, "Could not find labels file: "+file.getAbsolutePath(), ex);
+              LOGGER.error("Could not find labels file: "+file.getAbsolutePath(), ex);
               throw new DeepNettsException("Could not find labels file: "+file.getAbsolutePath(), ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Error reading labels file: "+file.getAbsolutePath(), ex);
+            LOGGER.error("Error reading labels file: "+file.getAbsolutePath(), ex);
             throw new DeepNettsException("Error reading labels file: "+file.getAbsolutePath(), ex);
         }        
     }

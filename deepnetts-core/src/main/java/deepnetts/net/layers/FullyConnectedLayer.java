@@ -112,14 +112,14 @@ public class FullyConnectedLayer extends AbstractLayer {
         // if previous layer is FullyConnected
         if (prevLayer instanceof FullyConnectedLayer) { 
             
-            outputs.copyFrom(biases);                                                  // first use (add) biases to all outputs
+            outputs.copyFrom(biases);                                                       // first use (add) biases to all outputs
             for (int outCol = 0; outCol < outputs.getCols(); outCol++) {                    // for all neurons/outputs in this layer
                 for (int inCol = 0; inCol < inputs.getCols(); inCol++) {                    // iterate all inputs from prev layer
                     outputs.add(outCol, inputs.get(inCol) * weights.get(inCol, outCol));    // and add weighted sum to outputs
                 } 
 
                 // apply activation function to all weigthed sums stored in outputs
-                outputs.set(outCol, ActivationFunctions.calc(activationType, outputs.get(outCol))); // ovo bi mogla da bude lambda ili Function()
+                outputs.set(outCol, ActivationFunctions.calc(activationType, outputs.get(outCol))); // this could be lambda or Function - apply it to entire Tensor
             }
         }
         

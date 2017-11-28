@@ -21,6 +21,7 @@
     
 package deepnetts.examples;
 
+import deepnetts.core.DeepNetts;
 import deepnetts.data.ImageSet;
 import deepnetts.net.ConvolutionalNetwork;
 import deepnetts.net.layers.ActivationType;
@@ -31,7 +32,8 @@ import deepnetts.eval.ClassifierEvaluator;
 import deepnetts.net.loss.LossType;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Cifar10Ce {
             
@@ -42,9 +44,8 @@ public class Cifar10Ce {
     String trainingFile = "datasets/cifar10/train.txt";
    // String testFile = "datasets/cifar10/test.txt";         
     
-    static final Logger LOGGER = Logger.getLogger(Cifar10Ce.class.toString());
-    
-    
+    static final Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());        
+        
     public void run() throws DeepNettsException, IOException {
         LOGGER.info("Loading images...");
         ImageSet imageSet = new ImageSet(imageWidth, imageHeight);        
@@ -60,11 +61,11 @@ public class Cifar10Ce {
         LOGGER.info("Creating neural network...");
 
         ConvolutionalNetwork neuralNet = ConvolutionalNetwork.builder()
-                                        .inputLayer(imageWidth, imageHeight) 
-                                        .convolutionalLayer(5, 5, 3, ActivationType.TANH)
+                                        .addInputLayer(imageWidth, imageHeight) 
+                                        .convolutionalLayer(5, 5, 6, ActivationType.TANH)
                                         .maxPoolingLayer(2, 2, 2)                                 
-                                        .fullyConnectedLayer(20, ActivationType.TANH)     
-                                        .outputLayer(labelsCount, ActivationType.SOFTMAX)
+                                        .fullyConnectedLayer(30, ActivationType.TANH)     
+                                        .addOutputLayer(labelsCount, ActivationType.SOFTMAX)
                                         .lossFunction(LossType.CROSS_ENTROPY)                
                                         .build();
         

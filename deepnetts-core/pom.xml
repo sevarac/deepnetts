@@ -8,7 +8,7 @@
     </parent>
     <artifactId>deepnetts-core</artifactId>
     <packaging>jar</packaging>
-    <dependencies>
+    <dependencies>        
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -27,6 +27,27 @@
             <version>2.8.47</version>
             <scope>test</scope>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
+            <version>2.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.7</version>
         </dependency>
     </dependencies>
     <properties>

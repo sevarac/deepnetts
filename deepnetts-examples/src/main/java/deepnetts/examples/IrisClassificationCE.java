@@ -38,7 +38,7 @@ import java.io.IOException;
 
 /**
  * Iris Classification Problem.
- * This example is using Softmax activation in output layer and Cross Entropy Loss function.
+ * This example is using Softmax activation in output addLayer and Cross Entropy Loss function.
  * 
  * @author Zoran Sevarac <zoran.sevarac@smart4net.co>
  */
@@ -46,12 +46,12 @@ public class IrisClassificationCE {
     
     public static void main(String[] args) throws DeepNettsException, IOException {
         
-        // create instance of multi layer percetpron using builder
+        // create instance of multi addLayer percetpron using builder
         MultiLayerPerceptron convNet = MultiLayerPerceptron.builder()
-                                            .inputLayer(4)
-                                            .fullyConnectedLayer(20, ActivationType.TANH)
-                                            .fullyConnectedLayer(13)
-                                            .outputLayer(3, SoftmaxOutputLayer.class)
+                                            .addInputLayer(4)
+                                            .addFullyConnectedLayer(20, ActivationType.TANH)
+                                            .addFullyConnectedLayer(13)
+                                            .addOutputLayer(3, SoftmaxOutputLayer.class)
                                             .lossFunction(LossType.CROSS_ENTROPY)
                                             .randomSeed(123).
                                         build();
