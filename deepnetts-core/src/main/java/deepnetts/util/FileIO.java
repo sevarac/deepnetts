@@ -221,47 +221,56 @@ public class FileIO {
                         width = layerObj.getInt("width");
                         height = layerObj.getInt("height");
                         channels = layerObj.getInt("channels");
-                        convNetBuilder.inputLayer(width, height, channels);                    
+                        convNetBuilder.addInputLayer(width, height, channels);                    
                 break;
                 case CONVOLUTIONAL :
                         filterWidth = layerObj.getInt("filterWidth");
                         filterHeight = layerObj.getInt("filterHeight");
                         stride = layerObj.getInt("stride");
                         channels = layerObj.getInt("channels");   
-                        activation = layerObj.getString("activation").toUpperCase();      
-                        JSONArray filters = layerObj.getJSONArray("filters");
-                        StringBuilder sb = new StringBuilder();
-                        for(Object filter : filters ) {
-                            sb.append(filter).append(";");
-                        }
-                        allWeights.add(sb.toString());                        
+                        activation = layerObj.getString("activation").toUpperCase(); 
                         
-                        convNetBuilder.convolutionalLayer(filterWidth, filterHeight, channels, ActivationType.valueOf(activation));                    
+                        if (layerObj.has("filters")) {
+                            JSONArray filters = layerObj.getJSONArray("filters");
+                            StringBuilder sb = new StringBuilder();
+                            for (Object filter : filters) {
+                                sb.append(filter).append(";");
+                            }
+                            allWeights.add(sb.toString());
+                        }
+                        
+                        // todo: add biases from json too
+                        
+                        convNetBuilder.addConvolutionalLayer(filterWidth, filterHeight, channels, ActivationType.valueOf(activation));                    
                 break;
                 case MAXPOOLING :
                         filterWidth = layerObj.getInt("filterWidth");
                         filterHeight = layerObj.getInt("filterHeight");
                         stride = layerObj.getInt("stride");
-                        convNetBuilder.maxPoolingLayer(filterWidth, filterHeight, stride);                    
+                        convNetBuilder.addMaxPoolingLayer(filterWidth, filterHeight, stride);                    
                 break;
                 case FULLYCONNECTED :
                         width = layerObj.getInt("width");
-                        activation = layerObj.getString("activation").toUpperCase();                   
-                        String weights = layerObj.getString("weights");
-                        allWeights.add(weights);                        
-                        convNetBuilder.fullyConnectedLayer(width, ActivationType.valueOf(activation));                                                                                                    
+                        activation = layerObj.getString("activation").toUpperCase();    
+                         if (layerObj.has("weights")) {
+                            String weights = layerObj.getString("weights");
+                            allWeights.add(weights);       
+                         }
+                        convNetBuilder.addFullyConnectedLayer(width, ActivationType.valueOf(activation));                                                                                                    
                 break;                
                 case OUTPUT :
                         width = layerObj.getInt("width");
                         activation = layerObj.getString("activation").toUpperCase();
-                        weights = layerObj.getString("weights");
-                        allWeights.add(weights);                           
+                        if (layerObj.has("weights")) {
+                            String weights = layerObj.getString("weights");
+                            allWeights.add(weights);                           
+                        }
                                               
                         if (activation.equals(ActivationType.SIGMOID.toString())) {
-                            convNetBuilder.outputLayer(width, OutputLayer.class);                  
+                            convNetBuilder.addOutputLayer(width, OutputLayer.class);                  
                             convNetBuilder.lossFunction(MeanSquaredErrorLoss.class);
                         } else if (activation.equals(ActivationType.SOFTMAX.toString())) {          
-                            convNetBuilder.outputLayer(width, SoftmaxOutputLayer.class);        
+                            convNetBuilder.addOutputLayer(width, SoftmaxOutputLayer.class);        
                             convNetBuilder.lossFunction(CrossEntropyLoss.class);
                         }                        
                 break;            

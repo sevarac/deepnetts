@@ -70,9 +70,9 @@ public class JavaOneSponsors {
         // dodaj i bele slike kao negative u data set
         ConvolutionalNetwork javaOneNet = ConvolutionalNetwork.builder()
                                         .addInputLayer(imageWidth, imageHeight) 
-                                        .convolutionalLayer(5, 5, 3, ActivationType.TANH)
-                                        .maxPoolingLayer(2, 2, 2)                 
-                                        .fullyConnectedLayer(30, ActivationType.TANH)
+                                        .addConvolutionalLayer(5, 5, 3, ActivationType.TANH)
+                                        .addMaxPoolingLayer(2, 2, 2)                 
+                                        .addFullyConnectedLayer(30, ActivationType.TANH)
                                         .addOutputLayer(labelsCount, ActivationType.SOFTMAX)
                                         .lossFunction(LossType.CROSS_ENTROPY)
                                         .randomSeed(123)

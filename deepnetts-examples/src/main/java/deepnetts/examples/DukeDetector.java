@@ -71,10 +71,10 @@ public class DukeDetector {
         LOGGER.info("Creating neural network...");
 
         ConvolutionalNetwork convNet = new ConvolutionalNetwork.Builder()
-                .inputLayer(imageWidth, imageHeight, 3)
-                .convolutionalLayer(5, 5, 1, ActivationType.TANH)
-                .maxPoolingLayer(2, 2, 2)
-                .fullyConnectedLayer(10, ActivationType.TANH)
+                .addInputLayer(imageWidth, imageHeight, 3)
+                .addConvolutionalLayer(5, 5, 1, ActivationType.TANH)
+                .addMaxPoolingLayer(2, 2, 2)
+                .addFullyConnectedLayer(10, ActivationType.TANH)
                 .addOutputLayer(1, ActivationType.SIGMOID)
                 .lossFunction(BinaryCrossEntropyLoss.class)
                 .build();

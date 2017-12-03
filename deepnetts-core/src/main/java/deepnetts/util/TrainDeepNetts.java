@@ -68,8 +68,8 @@ public class TrainDeepNetts {
 
             // u originanom LeCun-ovom radu koristi se tanh funkcija
             // create mnist architecture           
-            ConvolutionalNetwork convNet = new ConvolutionalNetwork.Builder()
-                    .inputLayer(imageWidth, imageHeight, 3)
+            ConvolutionalNetwork convNet = ConvolutionalNetwork.builder()
+                    .addInputLayer(imageWidth, imageHeight, 3)
                     .addConvolutionalLayer(5, 6)
                     .addMaxPoolingLayer(2, 2)
                     .addConvolutionalLayer(3, 3)

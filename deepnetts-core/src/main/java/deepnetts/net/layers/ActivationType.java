@@ -29,5 +29,9 @@ package deepnetts.net.layers;
  * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
 public enum ActivationType {
-     LINEAR, SIGMOID, TANH, RELU, SOFTMAX;     
+    LINEAR,
+    SIGMOID,
+    TANH,
+    RELU,
+    SOFTMAX;
 }

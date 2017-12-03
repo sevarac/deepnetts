@@ -89,7 +89,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
          * @param channels
          * @return 
          */
-        public Builder inputLayer(int width, int height, int channels) {
+        public Builder addInputLayer(int width, int height, int channels) {
             InputLayer inLayer = new InputLayer(width, height, channels);
             neuralNet.setInputLayer(inLayer);
             neuralNet.addLayer(inLayer);
@@ -103,7 +103,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder fullyConnectedLayer(int width, ActivationType activationFunction) {
+        public Builder addFullyConnectedLayer(int width, ActivationType activationFunction) {
             FullyConnectedLayer layer = new FullyConnectedLayer(width, activationFunction);
             neuralNet.addLayer(layer);
             return this;
@@ -116,7 +116,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
          * @param width layer width
          * @return builder instance
          */
-        public Builder outputLayer(int width) { // ActivationType.SOFTMAX
+        public Builder addOutputLayer(int width) { // ActivationType.SOFTMAX
             OutputLayer outputLayer = null;
             if (width == 1) {
                 outputLayer = new OutputLayer(width);
@@ -129,7 +129,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder outputLayer(int width, Class<? extends OutputLayer> clazz) { // ActivationType.SOFTMAX
+        public Builder addOutputLayer(int width, Class<? extends OutputLayer> clazz) { // ActivationType.SOFTMAX
             try {
                 OutputLayer outputLayer = clazz.getDeclaredConstructor(Integer.TYPE).newInstance(width);
                 neuralNet.addLayer(outputLayer);
@@ -163,19 +163,19 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder convolutionalLayer(int filterSize, int channels, ActivationType activationType) {
+        public Builder addConvolutionalLayer(int filterSize, int channels, ActivationType activationType) {
             ConvolutionalLayer convolutionalLayer = new ConvolutionalLayer(filterSize, filterSize, channels, activationType);
             neuralNet.addLayer(convolutionalLayer);
             return this;
         }
 
-        public Builder convolutionalLayer(int filterWidth, int filterHeight, int channels) {
+        public Builder addConvolutionalLayer(int filterWidth, int filterHeight, int channels) {
             ConvolutionalLayer convolutionalLayer = new ConvolutionalLayer(filterWidth, filterHeight, channels);
             neuralNet.addLayer(convolutionalLayer);
             return this;
         }
 
-        public Builder convolutionalLayer(int filterWidth, int filterHeight, int channels, ActivationType activationType) {
+        public Builder addConvolutionalLayer(int filterWidth, int filterHeight, int channels, ActivationType activationType) {
             ConvolutionalLayer convolutionalLayer = new ConvolutionalLayer(filterWidth, filterHeight, channels, activationType);
             neuralNet.addLayer(convolutionalLayer);
             return this;
@@ -187,7 +187,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder maxPoolingLayer(int filterWidth, int filterHeight, int stride) {
+        public Builder addMaxPoolingLayer(int filterWidth, int filterHeight, int stride) {
             MaxPoolingLayer poolingLayer = new MaxPoolingLayer(filterWidth, filterHeight, stride);
             neuralNet.addLayer(poolingLayer);
             return this;

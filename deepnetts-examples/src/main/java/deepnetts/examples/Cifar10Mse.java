@@ -61,9 +61,9 @@ public class Cifar10Mse {
 
         ConvolutionalNetwork cifar10Net = new ConvolutionalNetwork.Builder()
                                         .addInputLayer(imageWidth, imageHeight) 
-                                        .convolutionalLayer(5, 1, ActivationType.TANH)
+                                        .addConvolutionalLayer(5, 1, ActivationType.TANH)
                                         .addMaxPoolingLayer(2, 2)  
-                                        .fullyConnectedLayer(20, ActivationType.TANH)          
+                                        .addFullyConnectedLayer(20, ActivationType.TANH)          
                                         .addOutputLayer(labelsCount, ActivationType.TANH)
                                         .lossFunction(LossType.MEAN_SQUARED_ERROR)
                                         .randomSeed(123)
