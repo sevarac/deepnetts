@@ -24,7 +24,7 @@ package deepnetts.examples;
 import deepnetts.data.BasicDataSetItem;
 import deepnetts.data.DataSet;
 import deepnetts.data.DataSetItem;
-import deepnetts.net.MultiLayerPerceptron;
+import deepnetts.net.FeedForwardNetwork;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.layers.OutputLayer;
 import deepnetts.net.loss.LossType;
@@ -42,12 +42,12 @@ public class XorExample {
         
         DataSet dataSet = xorDataSet();
         
-        MultiLayerPerceptron convNet = MultiLayerPerceptron.builder()
+        FeedForwardNetwork convNet = FeedForwardNetwork.builder()
                 .addInputLayer(2)
                 .addFullyConnectedLayer(3, ActivationType.TANH)
-                .addOutputLayer(1, OutputLayer.class)
-                .lossFunction(LossType.MEAN_SQUARED_ERROR)
-                .randomSeed(123)
+                .addOutputLayer(1, ActivationType.SIGMOID)
+                .withLossFunction(LossType.MEAN_SQUARED_ERROR)
+                .withRandomSeed(123)
                 .build();
                                            
         BackpropagationTrainer trainer = new BackpropagationTrainer(convNet);

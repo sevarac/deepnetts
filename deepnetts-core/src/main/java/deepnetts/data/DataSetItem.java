@@ -24,7 +24,8 @@ package deepnetts.data;
 import deepnetts.util.Tensor;
 
 /**
- *
+ * 
+ * 
  * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
 public interface DataSetItem {

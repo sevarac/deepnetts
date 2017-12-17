@@ -1,0 +1,144 @@
+Training convolutional network with MNIST data set
+Loading images...
+Loaded 1000 images
+Creating neural network...
+Training neural network
+Iteration:1, Time:23268ms, TotalError:2.3631322, ErrorChange:2.3631322
+Iteration:2, Time:22039ms, TotalError:2.3320875, ErrorChange:-0.031044722
+Iteration:3, Time:21910ms, TotalError:2.2948282, ErrorChange:-0.03725934
+Iteration:4, Time:21732ms, TotalError:2.241078, ErrorChange:-0.053750277
+Iteration:5, Time:23710ms, TotalError:2.0914211, ErrorChange:-0.14965677
+Iteration:6, Time:22485ms, TotalError:1.9637128, ErrorChange:-0.12770832
+Iteration:7, Time:22420ms, TotalError:1.967622, ErrorChange:0.00390923
+Iteration:8, Time:22603ms, TotalError:1.9340595, ErrorChange:-0.03356254
+Iteration:9, Time:22820ms, TotalError:1.8918707, ErrorChange:-0.042188764
+Iteration:10, Time:23505ms, TotalError:1.8717531, ErrorChange:-0.02011764
+Iteration:11, Time:23060ms, TotalError:1.8697727, ErrorChange:-0.001980424
+Iteration:12, Time:21842ms, TotalError:1.8725197, ErrorChange:0.0027470589
+Iteration:13, Time:22141ms, TotalError:1.8875031, ErrorChange:0.014983416
+Iteration:14, Time:23743ms, TotalError:1.8913167, ErrorChange:0.0038135052
+Training convolutional network with MNIST data set
+Loading images...
+Loaded 1000 images
+Creating neural network...
+Training neural network
+Iteration:1, Time:6257ms, TotalError:2.3519504, ErrorChange:2.3519504
+Iteration:2, Time:6150ms, TotalError:2.2829013, ErrorChange:-0.06904912
+Iteration:3, Time:6132ms, TotalError:2.1977384, ErrorChange:-0.08516288
+Iteration:4, Time:6629ms, TotalError:2.0229244, ErrorChange:-0.17481399
+Iteration:5, Time:6084ms, TotalError:1.7437955, ErrorChange:-0.2791289
+Iteration:6, Time:6136ms, TotalError:1.496925, ErrorChange:-0.24687052
+Iteration:7, Time:6150ms, TotalError:1.3626672, ErrorChange:-0.1342578
+Iteration:8, Time:6558ms, TotalError:1.1370153, ErrorChange:-0.22565186
+Iteration:9, Time:9155ms, TotalError:0.93430984, ErrorChange:-0.2027055
+Iteration:10, Time:6870ms, TotalError:0.85727113, ErrorChange:-0.077038705
+Iteration:11, Time:6115ms, TotalError:0.76910365, ErrorChange:-0.08816749
+Iteration:12, Time:6246ms, TotalError:0.7144984, ErrorChange:-0.054605246
+Iteration:13, Time:7174ms, TotalError:0.65606844, ErrorChange:-0.058429956
+Iteration:14, Time:6469ms, TotalError:0.59259945, ErrorChange:-0.06346899
+Iteration:15, Time:6250ms, TotalError:0.5181605, ErrorChange:-0.07443893
+Iteration:16, Time:6380ms, TotalError:0.47216588, ErrorChange:-0.04599464
+Iteration:17, Time:6290ms, TotalError:0.44639304, ErrorChange:-0.02577284
+Iteration:18, Time:6129ms, TotalError:0.4039778, ErrorChange:-0.04241523
+Iteration:19, Time:6532ms, TotalError:0.38096884, ErrorChange:-0.023008972
+Iteration:20, Time:6616ms, TotalError:0.35438624, ErrorChange:-0.026582599
+Iteration:21, Time:6544ms, TotalError:0.32530862, ErrorChange:-0.02907762
+Iteration:22, Time:6401ms, TotalError:0.32604426, ErrorChange:7.356405E-4
+Iteration:23, Time:7262ms, TotalError:0.3251565, ErrorChange:-8.877516E-4
+Iteration:24, Time:8967ms, TotalError:0.30792367, ErrorChange:-0.017232835
+Iteration:25, Time:6510ms, TotalError:0.27691638, ErrorChange:-0.03100729
+Iteration:26, Time:6347ms, TotalError:0.28160825, ErrorChange:0.004691869
+Iteration:27, Time:6428ms, TotalError:0.2725958, ErrorChange:-0.009012461
+Iteration:28, Time:6507ms, TotalError:0.25405332, ErrorChange:-0.018542469
+Iteration:29, Time:6274ms, TotalError:0.24201006, ErrorChange:-0.0120432675
+Iteration:30, Time:6345ms, TotalError:0.2500667, ErrorChange:0.008056641
+Iteration:31, Time:6721ms, TotalError:0.2312249, ErrorChange:-0.018841803
+Iteration:32, Time:6262ms, TotalError:0.21676949, ErrorChange:-0.014455408
+Iteration:33, Time:6326ms, TotalError:0.21246508, ErrorChange:-0.004304409
+Training convolutional network with MNIST data set
+Loading images...
+Loaded 1000 images
+Creating neural network...
+Training neural network
+Iteration:1, Time:7401ms, TotalError:2.1000931, ErrorChange:2.1000931
+Iteration:2, Time:7234ms, TotalError:1.25869, ErrorChange:-0.8414031
+Iteration:3, Time:7224ms, TotalError:0.7436021, ErrorChange:-0.5150879
+Iteration:4, Time:7267ms, TotalError:0.5065074, ErrorChange:-0.2370947
+Iteration:5, Time:7231ms, TotalError:0.3810842, ErrorChange:-0.1254232
+Iteration:6, Time:7228ms, TotalError:0.31636837, ErrorChange:-0.06471583
+Iteration:7, Time:7182ms, TotalError:0.27625197, ErrorChange:-0.0401164
+Iteration:8, Time:7214ms, TotalError:0.22162585, ErrorChange:-0.054626122
+Iteration:9, Time:7219ms, TotalError:0.19786942, ErrorChange:-0.02375643
+Iteration:10, Time:7214ms, TotalError:0.1861221, ErrorChange:-0.0117473155
+Iteration:11, Time:7192ms, TotalError:0.17391153, ErrorChange:-0.012210578
+Iteration:12, Time:7205ms, TotalError:0.15884347, ErrorChange:-0.015068054
+Iteration:13, Time:7237ms, TotalError:0.15111409, ErrorChange:-0.0077293813
+Iteration:14, Time:7391ms, TotalError:0.14509302, ErrorChange:-0.0060210675
+Iteration:15, Time:7547ms, TotalError:0.13783167, ErrorChange:-0.0072613508
+Iteration:16, Time:8452ms, TotalError:0.12970068, ErrorChange:-0.008130997
+Iteration:17, Time:7730ms, TotalError:0.12619017, ErrorChange:-0.003510505
+Iteration:18, Time:7514ms, TotalError:0.12348539, ErrorChange:-0.0027047843
+Iteration:19, Time:7563ms, TotalError:0.11633254, ErrorChange:-0.007152848
+Iteration:20, Time:7359ms, TotalError:0.11500364, ErrorChange:-0.0013289005
+Iteration:21, Time:7218ms, TotalError:0.11355243, ErrorChange:-0.0014512092
+Iteration:22, Time:7236ms, TotalError:0.111803725, ErrorChange:-0.0017487034
+Iteration:23, Time:7189ms, TotalError:0.11143196, ErrorChange:-3.7176907E-4
+Iteration:24, Time:7189ms, TotalError:0.111361384, ErrorChange:-7.05719E-5
+Iteration:25, Time:7219ms, TotalError:0.11140367, ErrorChange:4.2282045E-5
+Iteration:26, Time:7219ms, TotalError:0.11150411, ErrorChange:1.0044128E-4
+Iteration:27, Time:7202ms, TotalError:0.11170545, ErrorChange:2.0134449E-4
+Iteration:28, Time:7218ms, TotalError:0.11217136, ErrorChange:4.6590716E-4
+Iteration:29, Time:7274ms, TotalError:0.11334322, ErrorChange:0.0011718571
+Iteration:30, Time:7198ms, TotalError:0.116744906, ErrorChange:0.0034016892
+Iteration:31, Time:7284ms, TotalError:0.11297724, ErrorChange:-0.0037676692
+Training convolutional network with MNIST data set
+Loading images...
+Loaded 200 images
+Creating neural network...
+Training neural network
+Iteration:1, Time:1588ms, TotalError:2.3224602, ErrorChange:2.3224602
+Iteration:2, Time:1442ms, TotalError:2.215846, ErrorChange:-0.10661411
+Iteration:3, Time:1447ms, TotalError:2.0994163, ErrorChange:-0.116429806
+Iteration:4, Time:1430ms, TotalError:1.941814, ErrorChange:-0.15760231
+Iteration:5, Time:1440ms, TotalError:1.701314, ErrorChange:-0.24049997
+Iteration:6, Time:1428ms, TotalError:1.4032344, ErrorChange:-0.2980796
+Iteration:7, Time:1435ms, TotalError:1.1779697, ErrorChange:-0.22526467
+Iteration:8, Time:1429ms, TotalError:1.0098647, ErrorChange:-0.168105
+Iteration:9, Time:1432ms, TotalError:0.90565383, ErrorChange:-0.10421085
+Iteration:10, Time:1432ms, TotalError:0.84115636, ErrorChange:-0.06449747
+Iteration:11, Time:1431ms, TotalError:0.77088875, ErrorChange:-0.07026762
+Iteration:12, Time:1430ms, TotalError:0.6751698, ErrorChange:-0.09571892
+Iteration:13, Time:1429ms, TotalError:0.5075378, ErrorChange:-0.16763204
+Iteration:14, Time:1436ms, TotalError:0.35174236, ErrorChange:-0.15579543
+Iteration:15, Time:1433ms, TotalError:0.28726068, ErrorChange:-0.064481676
+Iteration:16, Time:1440ms, TotalError:0.23643398, ErrorChange:-0.0508267
+Iteration:17, Time:1455ms, TotalError:0.1930801, ErrorChange:-0.043353885
+Iteration:18, Time:1449ms, TotalError:0.15645036, ErrorChange:-0.036629736
+Iteration:19, Time:1435ms, TotalError:0.13581577, ErrorChange:-0.020634592
+Iteration:20, Time:1457ms, TotalError:0.120675765, ErrorChange:-0.015140004
+Iteration:21, Time:1471ms, TotalError:0.10986069, ErrorChange:-0.0108150765
+Iteration:22, Time:1450ms, TotalError:0.100399196, ErrorChange:-0.009461492
+Iteration:23, Time:1436ms, TotalError:0.09272666, ErrorChange:-0.0076725334
+Iteration:24, Time:1471ms, TotalError:0.08501341, ErrorChange:-0.007713251
+Iteration:25, Time:1444ms, TotalError:0.07397577, ErrorChange:-0.01103764
+Iteration:26, Time:1436ms, TotalError:0.06622413, ErrorChange:-0.0077516437
+Iteration:27, Time:1680ms, TotalError:0.06138837, ErrorChange:-0.0048357584
+Iteration:28, Time:1456ms, TotalError:0.057461906, ErrorChange:-0.0039264634
+Iteration:29, Time:1443ms, TotalError:0.053646397, ErrorChange:-0.0038155094
+Iteration:30, Time:1431ms, TotalError:0.049543425, ErrorChange:-0.0041029714
+Iteration:31, Time:1455ms, TotalError:0.045571074, ErrorChange:-0.0039723516
+Iteration:32, Time:1458ms, TotalError:0.039075054, ErrorChange:-0.0064960197
+Iteration:33, Time:1456ms, TotalError:0.03108368, ErrorChange:-0.007991374
+Iteration:34, Time:1439ms, TotalError:0.027970683, ErrorChange:-0.0031129979
+Iteration:35, Time:1426ms, TotalError:0.026613977, ErrorChange:-0.001356706
+Iteration:36, Time:1435ms, TotalError:0.025566056, ErrorChange:-0.0010479204
+Iteration:37, Time:1428ms, TotalError:0.024655921, ErrorChange:-9.10135E-4
+Iteration:38, Time:1428ms, TotalError:0.023866678, ErrorChange:-7.892437E-4
+Iteration:39, Time:1437ms, TotalError:0.023149634, ErrorChange:-7.170439E-4
+Iteration:40, Time:1443ms, TotalError:0.022509899, ErrorChange:-6.397348E-4
+Iteration:41, Time:1442ms, TotalError:0.02191654, ErrorChange:-5.9335865E-4
+Iteration:42, Time:1425ms, TotalError:0.02136847, ErrorChange:-5.480703E-4
+Iteration:43, Time:1450ms, TotalError:0.02087456, ErrorChange:-4.9391016E-4
+Iteration:44, Time:1445ms, TotalError:0.02040404, ErrorChange:-4.7051907E-4
+Iteration:45, Time:1441ms, TotalError:0.01996437, ErrorChange:-4.3966994E-4
+Total Training Time: 65239ms

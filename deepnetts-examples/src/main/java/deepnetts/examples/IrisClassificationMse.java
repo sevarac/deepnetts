@@ -21,75 +21,50 @@
 
 package deepnetts.examples;
 
-import deepnetts.data.BasicDataSetItem;
 import deepnetts.data.DataSet;
-import deepnetts.net.MultiLayerPerceptron;
-import deepnetts.net.layers.OutputLayer;
-import deepnetts.net.loss.MeanSquaredErrorLoss;
+import deepnetts.net.FeedForwardNetwork;
+import deepnetts.net.layers.ActivationType;
+import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.OptimizerType;
 import deepnetts.util.DeepNettsException;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 /**
  * Iris Classification Problem.
- * Using sigmoid activation in output addLayer and mse as an error function.
+ * Using sigmoid activation in output addLayer by default and mse as a loss function.
  * 
- * @author Zoran Sevarac <zoran.sevarac@smart4net.co>
+ * @author Zoran Sevarac <zoran.sevarac@deepnetts.com>
  */
 public class IrisClassificationMse {
     
     public static void main(String[] args) throws DeepNettsException, IOException {
+                
+        // load iris data set from csv file
+        DataSet dataSet = DataSet.fromCSVFile(new File("datasets/iris_data_normalised.txt"), 4, 3, ",");
         
-        DataSet dataSet = loadIrisDataSet();
-        
-        MultiLayerPerceptron neuralNet = MultiLayerPerceptron.builder()
+        // create multi layer perceptron with specified settings
+        FeedForwardNetwork neuralNet = FeedForwardNetwork.builder()
                                         .addInputLayer(4)
                                         .addFullyConnectedLayer(30)
                                         .addFullyConnectedLayer(8)
-                                        .addOutputLayer(3, OutputLayer.class)
-                                        .lossFunction(MeanSquaredErrorLoss.class)
-                                        .randomSeed(123)
+                                        .addOutputLayer(3, ActivationType.SIGMOID)
+                                        .withLossFunction(LossType.MEAN_SQUARED_ERROR)
+                                        .withRandomSeed(123)
                                         .build();
-
-
                 
+        // create a trainer object with specified settings
         BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
         trainer.setMaxError(0.01f)
-               .setLearningRate(0.1f)
+               .setLearningRate(0.5f)
                .setMomentum(0.7f)
                .setOptimizer(OptimizerType.MOMENTUM)
                .setBatchMode(false);
                //.setBatchSize(10);
         
+        // train the network
         trainer.train(dataSet);                                                                                                                
     }
-    
-    public static DataSet loadIrisDataSet() throws FileNotFoundException, IOException {
-        DataSet dataSet = new DataSet(); // DataSetInterface(4, 3)
         
-        BufferedReader br = new BufferedReader(new FileReader(new File("datasets/iris_data_normalised.txt")));
-        String line = "";
-        while((line = br.readLine()) != null) {
-           String[] values = line.split(",");
-           float[] inputs =  new float[4];
-           float[] outputs = new float[3];
-           for(int i=0; i<4; i++) {
-               inputs[i] = Float.parseFloat(values[i]);      
-           }
-           
-           for(int j=0; j<3; j++) {
-               outputs[j] = Float.parseFloat(values[4+j]);
-           }
-           
-           dataSet.add(new BasicDataSetItem(inputs, outputs));                      
-        }
-                
-        return dataSet;        
-    }    
-    
 }

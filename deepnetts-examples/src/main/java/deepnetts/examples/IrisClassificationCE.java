@@ -23,7 +23,7 @@ package deepnetts.examples;
 
 import deepnetts.data.BasicDataSetItem;
 import deepnetts.data.DataSet;
-import deepnetts.net.MultiLayerPerceptron;
+import deepnetts.net.FeedForwardNetwork;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.layers.SoftmaxOutputLayer;
 import deepnetts.net.loss.CrossEntropyLoss;
@@ -46,18 +46,18 @@ public class IrisClassificationCE {
     
     public static void main(String[] args) throws DeepNettsException, IOException {
         
+        // load iris data  set
+        DataSet dataSet = DataSet.fromCSVFile(new File("datasets/iris_data_normalised.txt"), 4, 3, ",");        
+        
         // create instance of multi addLayer percetpron using builder
-        MultiLayerPerceptron convNet = MultiLayerPerceptron.builder()
+        FeedForwardNetwork convNet = FeedForwardNetwork.builder()
                                             .addInputLayer(4)
                                             .addFullyConnectedLayer(20, ActivationType.TANH)
                                             .addFullyConnectedLayer(13)
-                                            .addOutputLayer(3, SoftmaxOutputLayer.class)
-                                            .lossFunction(LossType.CROSS_ENTROPY)
-                                            .randomSeed(123).
+                                            .addOutputLayer(3, ActivationType.SOFTMAX)
+                                            .withLossFunction(LossType.CROSS_ENTROPY)
+                                            .withRandomSeed(123).
                                         build();
-
-        // load irisdata  set
-        DataSet dataSet = loadIrisDataSet();
               
         // create and configure instanceof backpropagation trainer 
         BackpropagationTrainer trainer = new BackpropagationTrainer(convNet);
@@ -69,29 +69,5 @@ public class IrisClassificationCE {
         trainer.setMaxIterations(10000);
         trainer.train(dataSet);                                                                                                                
     }
-    
-    
-    public static DataSet loadIrisDataSet() throws FileNotFoundException, IOException {
-        DataSet dataSet = new DataSet(); // DataSetInterface(4, 3)
-        
-        BufferedReader br = new BufferedReader(new FileReader(new File("datasets/iris_data_normalised.txt")));
-        String line = "";
-        while((line = br.readLine()) != null) {
-           String[] values = line.split(",");
-           float[] inputs =  new float[4];
-           float[] outputs = new float[3];
-           for(int i=0; i<4; i++) {
-               inputs[i] = Float.parseFloat(values[i]);      
-           }
-           
-           for(int j=0; j<3; j++) {
-               outputs[j] = Float.parseFloat(values[4+j]);
-           }
-           
-           dataSet.add(new BasicDataSetItem(inputs, outputs));                      
-        }
-                
-        return dataSet;        
-    }    
     
 }

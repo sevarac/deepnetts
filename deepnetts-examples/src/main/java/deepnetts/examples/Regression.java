@@ -22,7 +22,7 @@
 package deepnetts.examples;
 
 import deepnetts.data.DataSet;
-import deepnetts.net.MultiLayerPerceptron;
+import deepnetts.net.FeedForwardNetwork;
 import deepnetts.net.NeuralNetwork;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.loss.LossType;
@@ -40,11 +40,11 @@ public class Regression {
         
         DataSet dataSet = null;// get dataset from somewhere
         
-        NeuralNetwork neuralNet = MultiLayerPerceptron.builder()
+        NeuralNetwork neuralNet = FeedForwardNetwork.builder()
                                     .addInputLayer(5)
                                     .addFullyConnectedLayer(10, ActivationType.TANH)
                                     .addOutputLayer(1, ActivationType.LINEAR)
-                                    .lossFunction(LossType.MEAN_SQUARED_ERROR)          
+                                    .withLossFunction(LossType.MEAN_SQUARED_ERROR)          
                                     .build();
                        
         BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);

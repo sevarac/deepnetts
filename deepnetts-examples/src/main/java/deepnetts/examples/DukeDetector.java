@@ -64,7 +64,7 @@ public class DukeDetector {
 
         imageSet.loadLabels(new File(labelsFile));
         imageSet.loadImages(new File(trainingFile), false);
-        imageSet.invert();
+      //  imageSet.invert();
         imageSet.zeroMean();
         imageSet.shuffle();
 

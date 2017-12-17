@@ -143,21 +143,9 @@ public class MaxPoolingLayer extends AbstractLayer {
         // kako su povezani max pooling i sledeci conv layer?  standardna konvolucija
         // prvo treba propagirati delte iz narednog lejera u ovaj lejer
         // zapravo ovde treba samo preneti weighted deltas unazad a u prethodnom konvolucionom sloju se vrsi selekcija u skladu sa max ulazom itd.
-        
+                
         if (nextLayer instanceof FullyConnectedLayer) {
-            deltas.fill(0);
-
-            for (int ch = 0; ch < deltas.getDepth(); ch++) {  // iteriraj sve kanale/feature mape u ovom lejeru      
-                for (int row = 0; row < deltas.getRows(); row++) {
-                    for (int col = 0; col < deltas.getCols(); col++) {
-                        for (int ndC = 0; ndC < nextLayer.deltas.getCols(); ndC++) { // sledeci lejer delte po sirini/kolone posto je fully connected
-                            final float nextDelta = nextLayer.deltas.get(ndC);
-                            final float weight = nextLayer.weights.get(col, row, ch, ndC);
-                            deltas.add(row, col, ch,  nextDelta * weight);
-                        }
-                    }
-                } // end back propagate deltas
-            }
+            backwardFromFullyConnected();                        
         }
         
         else if (nextLayer instanceof ConvolutionalLayer) {
@@ -179,10 +167,10 @@ public class MaxPoolingLayer extends AbstractLayer {
                                     for (int fc = 0; fc < nextConvLayer.filterWidth; fc++) {
                                         final int outRow = ndr * nextConvLayer.stride + (fr - filterCenterY); 
                                         final int outCol = ndc * nextConvLayer.stride + (fc - filterCenterX);      
-                                       // sta ja ovde zapravo radim, gore pise da su row i col koordinate output a= iz ovog sloja a dole se uzim ainput iz sledeceg...
+                                       
                                         if (outRow < 0 || outRow >= outputs.getRows() || outCol < 0 || outCol >= outputs.getCols()) continue;
-                                        // delte se propagairaju preko tezina, ne bi trebalo da se mnoze sa izvodom! - ne izvod nego delte sledeceg lejera
-                                        // svaki filter propagira unazad svoju deltu, ne bi trebalo mesati delte iz razlicith kanala/filtera vec pre srednj avrednost ili sl?
+                                        
+                                        // svaki filter propagira unazad svoju deltu, ne bi trebalo mesati delte iz razlicith kanala/filtera vec pre srednja vrednost ili sl?
                                         deltas.add(outRow, outCol, outZ, nextLayerDelta * nextConvLayer.filters[ndz].get(fr, fc, fz));
                                     }
                                 }
@@ -195,6 +183,23 @@ public class MaxPoolingLayer extends AbstractLayer {
      
         // we can also put zeros to all deltas that dont bellong to max outputs, and free prev convolutional layer to do that...        
     }
+    
+    private void backwardFromFullyConnected() {
+        deltas.fill(0);
+
+        for (int ch = 0; ch < deltas.getDepth(); ch++) {  // iteriraj sve kanale/feature mape u ovom lejeru      
+            for (int row = 0; row < deltas.getRows(); row++) {
+                for (int col = 0; col < deltas.getCols(); col++) {
+                    for (int ndC = 0; ndC < nextLayer.deltas.getCols(); ndC++) { // sledeci lejer iteriraj delte po sirini/kolonama posto je fully connected
+                        final float nextDelta = nextLayer.deltas.get(ndC);
+                        final float weight = nextLayer.weights.get(col, row, ch, ndC);
+                        deltas.add(row, col, ch, nextDelta * weight);
+                    }
+                }
+            }
+        }
+    }
+    
 
     /**
      * Does nothing for pooling layer since it does not have weights
@@ -214,6 +219,8 @@ public class MaxPoolingLayer extends AbstractLayer {
     public int getStride() {
         return stride;
     }
+
+
     
     
     

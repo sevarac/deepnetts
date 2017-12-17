@@ -22,14 +22,14 @@
 package deepnetts.examples;
 
 import deepnetts.data.DataSet;
-import deepnetts.net.MultiLayerPerceptron;
+import deepnetts.net.FeedForwardNetwork;
 import deepnetts.net.NeuralNetwork;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 
 /**
- * Minimal example for logistic regression using MultiLayerPerceptron.
+ * Minimal example for logistic regression using FeedForwardNetwork.
  * Can perform binary classification (single output true/false)
  Uses only input and output addLayer with sigmoid activation function
  Just specify number of inputs and provide data set
@@ -43,10 +43,10 @@ public class LogisticRegression {
         
         DataSet dataSet =null; // get data from some file or method   
         
-        NeuralNetwork neuralNet = MultiLayerPerceptron.builder()
+        NeuralNetwork neuralNet = FeedForwardNetwork.builder()
                 .addInputLayer(5)
                 .addOutputLayer(1, ActivationType.SIGMOID)
-                .lossFunction(LossType.MEAN_SQUARED_ERROR)
+                .withLossFunction(LossType.MEAN_SQUARED_ERROR)
                 .build();
         
         BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);

@@ -26,7 +26,6 @@ import deepnetts.net.train.Optimizers;
 import deepnetts.util.DeepNettsException;
 import deepnetts.util.WeightsInit;
 import deepnetts.util.Tensor;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**

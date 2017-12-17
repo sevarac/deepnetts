@@ -21,6 +21,11 @@
     
 package deepnetts.data;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,14 +40,24 @@ import java.util.List;
 public class DataSet<ITEM_TYPE extends DataSetItem> implements Iterable<ITEM_TYPE> {
     List<ITEM_TYPE> items;
     private Iterator<ITEM_TYPE> iterator;
+    
+    private int inputs, outputs;
 
-    private String label;
+    private String label; // label should be removed probably
      
     // constructor with vector dimensions annd capacity
      
     public DataSet() {
         items = new ArrayList<>();
     }
+
+    public DataSet(int inputs, int outputs) {
+        this();
+        this.inputs = inputs;
+        this.outputs = outputs;
+    }
+    
+    
                
     @Override
     public Iterator<ITEM_TYPE> iterator() {
@@ -65,5 +80,29 @@ public class DataSet<ITEM_TYPE extends DataSetItem> implements Iterable<ITEM_TYP
     public void setLabel(String label) {
         this.label = label;
     }
+    
+    // empty lines, error messages - line num , row
+    public static DataSet fromCSVFile(File csvFile, int inputCount, int outputCount, String delimiter) throws FileNotFoundException, IOException {
+        DataSet dataSet = new DataSet(inputCount, outputCount);
+        BufferedReader br = new BufferedReader(new FileReader(csvFile));
+        String line = "";
+        while((line = br.readLine()) != null) {
+           String[] values = line.split(delimiter);
+           float[] in =  new float[inputCount];
+           float[] out = new float[outputCount];
+           for(int i=0; i<inputCount; i++) {
+               in[i] = Float.parseFloat(values[i]);      
+           }
+           
+           for(int j=0; j<outputCount; j++) {
+               out[j] = Float.parseFloat(values[inputCount+j]);
+           }
+           
+           dataSet.add(new BasicDataSetItem(in, out));                      
+        }
+                
+        return dataSet;          
+    }
+    
             
 }

@@ -358,13 +358,7 @@ public class Tensor implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
-        // toString logging
-//        if (ConvNetLogger.getInstance().logParams()) {
-//            sb.append("{Tensor, cols:"+cols+", rows:"+rows+", depth:"+depth+", fourthDim:"+fourthDim+", dimensions:"+dimensions);
-//            sb.append(",values:");
-//        }
-        
+       
         sb.append("");
         for (int i = 0; i < values.length; i++) {
             sb.append(values[i]);
@@ -558,6 +552,10 @@ public class Tensor implements Serializable {
         for(int i=0; i<strArr.length; i++) {
             this.values[i] = Float.parseFloat(strArr[i]);
         }
+    }
+    
+    public static Tensor create(int rows, int cols, float[] values) {
+        return new Tensor(rows, cols, values);        
     }
             
 }

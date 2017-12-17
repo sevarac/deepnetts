@@ -22,14 +22,18 @@
 package deepnetts.examples;
 
 import deepnetts.data.DataSet;
-import deepnetts.net.MultiLayerPerceptron;
+import deepnetts.net.FeedForwardNetwork;
 import deepnetts.net.NeuralNetwork;
 import deepnetts.net.layers.ActivationType;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Minimal example for linear regression using MultiLayerPerceptron.
+ * Minimal example for linear regression using FeedForwardNetwork.
  * Fits a straight line through the data.
  Uses a single addLayer with one output and linear activation function, and Mean Squared Error for Loss function.
  You can use linear regression to roughly estimate a global trend in data.
@@ -40,17 +44,21 @@ public class LinearRegression {
     
     public static void main(String[] args) {
         
-        DataSet dataSet =null; // get data from some file or method        
-        
-        NeuralNetwork neuralNet = MultiLayerPerceptron.builder()
-                                    .addInputLayer(5)
-                                    .addOutputLayer(1, ActivationType.LINEAR)
-                                    .lossFunction(LossType.MEAN_SQUARED_ERROR)
-                                    .build();
-                       
-        BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
-                               trainer.setLearningRate(0.1f)
-                                      .train(dataSet);           
+        try {
+            DataSet dataSet = DataSet.fromCSVFile(new File("fileName.csv"), 5, 1, ","); // get data from some file or method
+            
+            NeuralNetwork neuralNet = FeedForwardNetwork.builder()
+                    .addInputLayer(5)
+                    .addOutputLayer(1, ActivationType.LINEAR)
+                    .withLossFunction(LossType.MEAN_SQUARED_ERROR)
+                    .build();
+            
+            BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
+            trainer.setLearningRate(0.1f)           
+                    .train(dataSet);
+        } catch (IOException ex) {
+            Logger.getLogger(LinearRegression.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
