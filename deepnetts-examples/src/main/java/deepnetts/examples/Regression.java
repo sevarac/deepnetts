@@ -47,8 +47,8 @@ public class Regression {
                                     .withLossFunction(LossType.MEAN_SQUARED_ERROR)          
                                     .build();
                        
-        BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
-                               trainer.train(dataSet);         
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
+                               trainer.train(neuralNet, dataSet);         
     }
     
 }

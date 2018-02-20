@@ -74,20 +74,20 @@ public class JavaOneSponsors {
                                         .addMaxPoolingLayer(2, 2, 2)                 
                                         .addFullyConnectedLayer(30, ActivationType.TANH)
                                         .addOutputLayer(labelsCount, ActivationType.SOFTMAX)
-                                        .lossFunction(LossType.CROSS_ENTROPY)
-                                        .randomSeed(123)
+                                        .withLossFunction(LossType.CROSS_ENTROPY)
+                                        .withRandomSeed(123)
                                         .build();
                      
         LOGGER.info("Training neural network"); 
         
         // create a set of convolutional networks and do training, crossvalidation and performance evaluation
-        BackpropagationTrainer trainer = new BackpropagationTrainer(javaOneNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setLearningRate(0.01f)
                .setMomentum(0.7f)
                .setMaxError(0.03f)
                .setMaxIterations(500)
                .setOptimizer(OptimizerType.MOMENTUM);
-        trainer.train(imageSet);   
+        trainer.train(javaOneNet, imageSet);   
           
         // Serialize network
         try {

@@ -66,18 +66,18 @@ public class Cifar10Ce {
                                         .addMaxPoolingLayer(2, 2, 2)                                 
                                         .addFullyConnectedLayer(30, ActivationType.TANH)     
                                         .addOutputLayer(labelsCount, ActivationType.SOFTMAX)
-                                        .lossFunction(LossType.CROSS_ENTROPY)                
+                                        .withLossFunction(LossType.CROSS_ENTROPY)                
                                         .build();
         
         LOGGER.info("Done!");       
         LOGGER.info("Training neural network"); 
          
-        BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setLearningRate(0.01f);
         trainer.setMaxError(0.5f);
         trainer.setMomentum(0.9f); 
         trainer.setOptimizer(OptimizerType.MOMENTUM); 
-        trainer.train(imageSet);       
+        trainer.train(neuralNet, imageSet);       
         
         // Test trained network
         ClassifierEvaluator evaluator = new ClassifierEvaluator();

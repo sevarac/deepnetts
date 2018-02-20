@@ -49,9 +49,9 @@ public class LogisticRegression {
                 .withLossFunction(LossType.MEAN_SQUARED_ERROR)
                 .build();
         
-        BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
                                trainer.setLearningRate(0.1f)
-                                      .train(dataSet);        
+                                      .train(neuralNet, dataSet);        
                 
     }
     

@@ -60,14 +60,14 @@ public class IrisClassificationCE {
                                         build();
               
         // create and configure instanceof backpropagation trainer 
-        BackpropagationTrainer trainer = new BackpropagationTrainer(convNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setMaxError(0.02f);
         trainer.setLearningRate(0.5f);
         trainer.setMomentum(0.3f);
         trainer.setBatchMode(false);
         //trainer.setBatchSize(150);
         trainer.setMaxIterations(10000);
-        trainer.train(dataSet);                                                                                                                
+        trainer.train(convNet, dataSet);                                                                                                                
     }
     
 }

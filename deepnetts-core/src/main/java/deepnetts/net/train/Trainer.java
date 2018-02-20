@@ -21,13 +21,13 @@
     
 package deepnetts.net.train;
 
-public interface Trainer<DATASET_CLASS> {
+public interface Trainer<MODEL_CLASS, DATASET_CLASS> {
     
     /**
      * Train the model with specified data set
      * 
      * @param trainingSet data set to use for training
      */
-    public void train(DATASET_CLASS trainingSet);
+    public void train(MODEL_CLASS model, DATASET_CLASS trainingSet);
     
 }

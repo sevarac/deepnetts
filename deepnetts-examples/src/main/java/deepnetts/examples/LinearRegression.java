@@ -53,9 +53,9 @@ public class LinearRegression {
                     .withLossFunction(LossType.MEAN_SQUARED_ERROR)
                     .build();
             
-            BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
+            BackpropagationTrainer trainer = new BackpropagationTrainer();
             trainer.setLearningRate(0.1f)           
-                    .train(dataSet);
+                    .train(neuralNet, dataSet);
         } catch (IOException ex) {
             Logger.getLogger(LinearRegression.class.getName()).log(Level.SEVERE, null, ex);
         }

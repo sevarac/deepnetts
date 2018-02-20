@@ -65,7 +65,7 @@ public class ClassifierEvaluator implements Evaluator<ConvolutionalNetwork, Imag
     
     @Override
     public void evaluate(ConvolutionalNetwork convNet, ImageSet imageSet) {    
-        classLabels =  imageSet.getLabels();
+        classLabels =  imageSet.getOutputLabels();
         init();
         
         total = new ClassificationStats();

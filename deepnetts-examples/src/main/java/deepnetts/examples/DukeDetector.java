@@ -76,20 +76,20 @@ public class DukeDetector {
                 .addMaxPoolingLayer(2, 2, 2)
                 .addFullyConnectedLayer(10, ActivationType.TANH)
                 .addOutputLayer(1, ActivationType.SIGMOID)
-                .lossFunction(BinaryCrossEntropyLoss.class)
+                .withLossFunction(BinaryCrossEntropyLoss.class)
                 .build();
 
-        convNet.setOutputLabels(imageSet.getLabels());
+        convNet.setOutputLabels(imageSet.getOutputLabels());
 
         LOGGER.info("Training neural network");
 
         // create a set of convolutional networks and do training, crossvalidation and performance evaluation
-        BackpropagationTrainer trainer = new BackpropagationTrainer(convNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setMaxError(0.02f)
                 .setLearningRate(0.01f)
                 .setOptimizer(OptimizerType.MOMENTUM)
                 .setMomentum(0.2f);
-        trainer.train(imageSet);
+        trainer.train(convNet, imageSet);
 
         // to save neural network to file on disk
         FileIO.writeToFile(convNet, "DukeDetector.dnet");

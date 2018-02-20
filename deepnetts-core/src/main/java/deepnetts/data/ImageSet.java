@@ -227,7 +227,7 @@ public class ImageSet extends DataSet<ExampleImage> {
         return images;
     }
 
-    public List<String> getLabels() {
+    public List<String> getOutputLabels() {
         return labels;
     }
     

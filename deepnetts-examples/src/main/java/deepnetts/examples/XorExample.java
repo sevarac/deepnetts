@@ -26,7 +26,6 @@ import deepnetts.data.DataSet;
 import deepnetts.data.DataSetItem;
 import deepnetts.net.FeedForwardNetwork;
 import deepnetts.net.layers.ActivationType;
-import deepnetts.net.layers.OutputLayer;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.util.DeepNettsException;
@@ -50,10 +49,10 @@ public class XorExample {
                 .withRandomSeed(123)
                 .build();
                                            
-        BackpropagationTrainer trainer = new BackpropagationTrainer(convNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setMaxError(0.01f);
         trainer.setLearningRate(0.9f);
-        trainer.train(dataSet);                                                                                                                
+        trainer.train(convNet, dataSet);                                                                                                                
     }
     
     public static DataSet xorDataSet() {

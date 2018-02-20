@@ -81,20 +81,20 @@ public class Mnist {
                                         .addFullyConnectedLayer(20)
                                         .addOutputLayer(labelsCount, ActivationType.SOFTMAX)
                                         .activationFunction(ActivationType.RELU) 
-                                        .lossFunction(LossType.CROSS_ENTROPY)
-                                        .randomSeed(123)       
+                                        .withLossFunction(LossType.CROSS_ENTROPY)
+                                        .withRandomSeed(123)       
                                         .build();   
                    
         LOGGER.info("Training neural network"); 
                  
         // create a trainer and train network
-        BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setLearningRate(0.03f)
                 .setMomentum(0.7f)
                 .setMaxError(0.02f)
                 .setBatchMode(false)
                 .setOptimizer(OptimizerType.MOMENTUM);
-        trainer.train(imageSet);   
+        trainer.train(neuralNet, imageSet);   
                        
         // Test trained network
         ClassifierEvaluator tester = new ClassifierEvaluator();

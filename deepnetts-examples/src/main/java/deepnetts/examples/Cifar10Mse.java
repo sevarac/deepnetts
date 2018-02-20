@@ -65,19 +65,19 @@ public class Cifar10Mse {
                                         .addMaxPoolingLayer(2, 2)  
                                         .addFullyConnectedLayer(20, ActivationType.TANH)          
                                         .addOutputLayer(labelsCount, ActivationType.TANH)
-                                        .lossFunction(LossType.MEAN_SQUARED_ERROR)
-                                        .randomSeed(123)
+                                        .withLossFunction(LossType.MEAN_SQUARED_ERROR)
+                                        .withRandomSeed(123)
                                         .build();
           
         LOGGER.info("Training neural network"); 
          
-        BackpropagationTrainer trainer = new BackpropagationTrainer(cifar10Net);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setMaxError(0.03f);
         trainer.setLearningRate(0.01f); // 0.0001
         trainer.setMomentum(0.9f); 
         trainer.setOptimizer(OptimizerType.MOMENTUM); 
        // trainer.setBatchMode(false); // false by default
-        trainer.train(imageSet);                                     
+        trainer.train(cifar10Net, imageSet);                                     
     }
         
     public static void main(String[] args) throws DeepNettsException, IOException {                                

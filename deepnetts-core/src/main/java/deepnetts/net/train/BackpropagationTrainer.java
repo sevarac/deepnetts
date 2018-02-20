@@ -38,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
  * 
  * @author Zoran Sevarac <zoran.sevarac@smart4net.co>
  */
-public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable {
+public class BackpropagationTrainer implements Trainer<NeuralNetwork, DataSet<?>>, Serializable {
 
     /**
      * Maximum number of training iterations.
@@ -89,16 +89,13 @@ public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(DeepNetts.class.getName());    
     
 
-    public BackpropagationTrainer(NeuralNetwork neuralNet) { 
+    public BackpropagationTrainer() { 
         
-        if (neuralNet == null) throw new IllegalArgumentException("Parameter neuralNet cannot be null!");
-        
-        this.neuralNet = neuralNet;
+
     }
     
-    public BackpropagationTrainer(NeuralNetwork neuralNet, Properties prop) { 
-        this(neuralNet);
-                
+    public BackpropagationTrainer(Properties prop) { 
+               
         this.maxError = Float.parseFloat(prop.getProperty(PROP_MAX_ERROR));
         this.maxIterations = Integer.parseInt(prop.getProperty(PROP_MAX_ITERATIONS));
         this.learningRate = Float.parseFloat(prop.getProperty(PROP_LEARNING_RATE));
@@ -118,7 +115,7 @@ public class BackpropagationTrainer implements Trainer<DataSet<?>>, Serializable
      * @param dataSet 
      */
     @Override
-    public void train(DataSet<?> dataSet) {
+    public void train(NeuralNetwork neuralNet, DataSet<?> dataSet) {
 
         if (dataSet == null) throw new IllegalArgumentException("Argument dataSet cannot be null!");
         if (dataSet.size() == 0) throw new RuntimeException("Data set is empty!");

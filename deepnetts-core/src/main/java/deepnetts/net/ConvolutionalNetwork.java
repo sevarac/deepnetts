@@ -198,7 +198,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder lossFunction(Class<? extends LossFunction> clazz) {
+        public Builder withLossFunction(Class<? extends LossFunction> clazz) {
             try {
                 LossFunction loss = clazz.getDeclaredConstructor(NeuralNetwork.class).newInstance(neuralNet);
                 neuralNet.setLossFunction(loss);
@@ -209,7 +209,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder lossFunction(LossType lossType) {
+        public Builder withLossFunction(LossType lossType) {
             LossFunction loss = null;
             switch (lossType) {
                 case MEAN_SQUARED_ERROR:
@@ -228,7 +228,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
             return this;
         }
 
-        public Builder randomSeed(long seed) {
+        public Builder withRandomSeed(long seed) {
             RandomGenerator.getDefault().initSeed(seed);
             return this;
         }
@@ -256,7 +256,7 @@ public class ConvolutionalNetwork extends NeuralNetwork implements Serializable 
 
             // if loss is not set use default loss function
             if (neuralNet.getLossFunction() == null) {
-                lossFunction(defaultLossFunction);
+                withLossFunction(defaultLossFunction);
             }
 
             return neuralNet;

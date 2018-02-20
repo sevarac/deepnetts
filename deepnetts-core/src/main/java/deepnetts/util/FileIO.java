@@ -268,10 +268,10 @@ public class FileIO {
                                               
                         if (activation.equals(ActivationType.SIGMOID.toString())) {
                             convNetBuilder.addOutputLayer(width, OutputLayer.class);                  
-                            convNetBuilder.lossFunction(MeanSquaredErrorLoss.class);
+                            convNetBuilder.withLossFunction(MeanSquaredErrorLoss.class);
                         } else if (activation.equals(ActivationType.SOFTMAX.toString())) {          
                             convNetBuilder.addOutputLayer(width, SoftmaxOutputLayer.class);        
-                            convNetBuilder.lossFunction(CrossEntropyLoss.class);
+                            convNetBuilder.withLossFunction(CrossEntropyLoss.class);
                         }                        
                 break;            
             }            
@@ -281,8 +281,8 @@ public class FileIO {
         String lossFunction = jsonObj.getString("lossFunction");
         
         try {
-            convNetBuilder.randomSeed(randomSeed)
-                    .lossFunction((Class<? extends LossFunction>) Class.forName(lossFunction));
+            convNetBuilder.withRandomSeed(randomSeed)
+                    .withLossFunction((Class<? extends LossFunction>) Class.forName(lossFunction));
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DeepNetts.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);

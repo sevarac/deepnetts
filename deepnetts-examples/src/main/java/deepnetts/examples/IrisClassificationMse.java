@@ -55,7 +55,7 @@ public class IrisClassificationMse {
                                         .build();
                 
         // create a trainer object with specified settings
-        BackpropagationTrainer trainer = new BackpropagationTrainer(neuralNet);
+        BackpropagationTrainer trainer = new BackpropagationTrainer();
         trainer.setMaxError(0.01f)
                .setLearningRate(0.5f)
                .setMomentum(0.7f)
@@ -64,7 +64,7 @@ public class IrisClassificationMse {
                //.setBatchSize(10);
         
         // train the network
-        trainer.train(dataSet);                                                                                                                
+        trainer.train(neuralNet, dataSet);                                                                                                                
     }
         
 }
