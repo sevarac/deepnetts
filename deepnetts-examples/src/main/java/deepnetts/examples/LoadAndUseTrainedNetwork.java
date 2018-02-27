@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import visrec.classifier.ClassificationResult;
-import visrec.classifier.ClassificationResults;
+import javax.visrec.ml.classification.ClassificationResult;
+import javax.visrec.ml.classification.ClassificationResults;
 
 /**
  * This example shows how to load and create instance of trained network from file.

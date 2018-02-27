@@ -751,3 +751,6 @@ Iteration:28, Time:1257ms, TotalError:0.021523053, ErrorChange:-0.0011262223
 Iteration:29, Time:970ms, TotalError:0.020487793, ErrorChange:-0.00103526
 Iteration:30, Time:1170ms, TotalError:0.01953163, ErrorChange:-9.561628E-4
 Total Training Time: 34925ms
+Training convolutional network with MNIST data set
+Loading images...
+javax.imageio.IIOException: Can't read input file!

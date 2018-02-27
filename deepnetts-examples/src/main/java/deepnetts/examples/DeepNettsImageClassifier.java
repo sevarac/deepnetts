@@ -28,10 +28,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 import javax.imageio.ImageIO;
-import visrec.classifier.AbstractImageClassifier;
-import visrec.classifier.ClassificationResult;
-import visrec.classifier.ClassificationResults;
-import visrec.classifier.Classifier;
+import javax.visrec.AbstractImageClassifier;
+import javax.visrec.ml.classification.ClassificationResult;
+import javax.visrec.ml.classification.ClassificationResults;
+import javax.visrec.ml.classification.Classifier;
 
 /**
  * Example how to create image classifier using ConvolutionalNetwork
